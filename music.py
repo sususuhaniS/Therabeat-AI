@@ -1,33 +1,32 @@
-# music.py
-
 import asyncio
 import os
-import aiofiles
-import aiohttp
-import nest_asyncio
-import soundfile as sf
+import wave
 import streamlit as st
 import random
-
-
-#import ffmpeg
+import numpy as np
 from io import BytesIO
 from datetime import datetime, timedelta
-
 import time
-
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+import nest_asyncio
+from google import genai
+from google.genai import types
 
 # Allow asyncio to run nested within Streamlit
 nest_asyncio.apply()
 
-# Load Beatoven AI key from Streamlit secrets
-BACKEND_V1_API_URL = "https://public-api.beatoven.ai/api/v1"
-BACKEND_API_HEADER_KEY = st.secrets["BEATOVEN_API_KEY"]
+# Load Lyria API key from Streamlit secrets
+API_KEY = st.secrets.get("LYRIA_API_KEY")
+MODEL_ID = "models/lyria-v1"
 
-if not BACKEND_API_HEADER_KEY:
-    st.error("❌ Beatoven API key is not configured. Please check your secrets.toml file.")
+if not API_KEY:
+    st.error("❌ Lyria API key is not configured. Please check your secrets.toml file.")
+
+
+
+client = genai.Client(
+    api_key=API_KEY,
+    http_options={'api_version': 'v1alpha'} # REQUIRED for Lyria
+)
 
 # Genre mapping and prompts
 GENRE_MAPPING = [
@@ -51,23 +50,23 @@ def predict_favorite_genre(user_profile, model):
         # Helper function to safely get and convert values to float32
         def get_feature(key, default=0):
             value = user_profile.get(key, default)
-            
+           
             # Handle None values
             if value is None:
                 return float(default)
-                
+               
             # Convert to string for consistent handling
             if not isinstance(value, str):
                 value = str(value)
-                
+               
             # Convert string numbers to float
             if value.replace('.', '').isdigit():
                 return float(value)
-                
+               
             # Handle yes/no fields
             if value.lower() in ['yes', 'no']:
                 return 1.0 if value.lower() == 'yes' else 0.0
-                
+               
             # Handle frequency strings (Never, Rarely, Sometimes, Very frequently)
             freq_map = {
                 'never': 0.0,
@@ -77,13 +76,13 @@ def predict_favorite_genre(user_profile, model):
             }
             if value.lower() in freq_map:
                 return freq_map[value.lower()]
-                
+               
             # Default case - try to convert to float, fallback to default
             try:
                 return float(value)
             except (ValueError, TypeError):
                 return float(default)
-        
+       
         # Prepare the input features for the model
         input_features = [
             float(get_feature('Age', 25)),
@@ -113,26 +112,74 @@ def predict_favorite_genre(user_profile, model):
             float(get_feature('OCD', 5)),
             float(1 if str(user_profile.get('MusicEffects', 'No')).lower() == 'improve' else 0)
         ]
-        
+       
         # Ensure all features are float32 and in a 2D numpy array
         import numpy as np
         input_array = np.array([input_features], dtype=np.float32)
-        
+       
         # Get prediction from the model
         prediction = model.predict(input_array)
-        
+       
         # Ensure prediction is an integer index
         index = int(prediction[0]) if len(prediction) > 0 else 0
         index = max(0, min(index, len(GENRE_MAPPING) - 1))  # Ensure valid index
-        
-        return GENRE_MAPPING[index]
-        
+       
+        predicted_genre = GENRE_MAPPING[index]
+       
+        return predicted_genre
+       
     except Exception:
         return "Pop"
 
+async def generate_genre_track(genre_name, duration_seconds=10):
+    """ACTUALLY generates audio using Lyria RealTime."""
+    prompt_text = GENRE_PROMPTS.get(genre_name)
+    if not prompt_text:
+        st.error(f"Genre {genre_name} not found.")
+        return None
+
+    filename = f"{genre_name.replace(' ', '_')}_track.wav"
+   
+    try:
+        # We save the stream to a local file so Streamlit can play it
+        with wave.open(filename, 'wb') as wf:
+            wf.setnchannels(2)      # Stereo
+            wf.setsampwidth(2)      # 16-bit
+            wf.setframerate(48000)  # 48kHz
+
+            # Connect to the Lyria WebSocket
+            async with client.aio.live.music.connect(model='models/lyria-realtime-exp') as session:
+                st.write(f"🎵 Connected to Lyria. Composing {genre_name}...")
+               
+                # Set the prompt
+                await session.set_weighted_prompts(
+                    prompts=[types.WeightedPrompt(text=prompt_text, weight=1.0)]
+                )
+
+                # Start playback
+                await session.play()
+
+                chunks_needed = duration_seconds // 2 # ~2 seconds per chunk
+                count = 0
+
+                async for message in session.receive():
+                    if message.server_content.audio_chunks:
+                        # Write raw PCM data to the wav file
+                        wf.writeframes(message.server_content.audio_chunks[0].data)
+                        count += 1
+                   
+                    if count >= chunks_needed:
+                        break
+       
+        return filename
+
+    except Exception as e:
+        st.error(f"❌ Lyria Connection Error: {str(e)}")
+        return None
+
 async def get_spotify_playlist(genre, sp_client=None):
     """Fetch a random Spotify playlist for the given genre.
-    
+   
     Args:
         genre (str): The music genre to search for
         sp_client: Optional Spotify client instance. If not provided, will try to initialize one.
@@ -142,108 +189,38 @@ async def get_spotify_playlist(genre, sp_client=None):
             if not hasattr(st, 'secrets') or not st.secrets.get("SPOTIFY_CLIENT_ID"):
                 st.error("❌ Spotify API credentials not configured.")
                 return None
+            import spotipy
+            from spotipy.oauth2 import SpotifyClientCredentials
             sp_client = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
-                client_id=st.secrets['music']["SPOTIFY_CLIENT_ID"],
-                client_secret=st.secrets['music']["SPOTIFY_CLIENT_SECRET"]
+                client_id=st.secrets["SPOTIFY_CLIENT_ID"],
+                client_secret=st.secrets["SPOTIFY_CLIENT_SECRET"]
             ))
-            
+           
         results = sp_client.search(q=genre, type='playlist', limit=5)
         if not results or 'playlists' not in results or not results['playlists']['items']:
             st.error("❌ No playlists found for this genre. Please try another genre.")
             return None
-            
+           
         playlist = random.choice(results['playlists']['items'])
         return playlist['external_urls']['spotify']
-        
+       
     except Exception:
         return None
-
-async def compose_track(request_data):
-    """Send request to compose a new track."""
-    try:
-        if not BACKEND_API_HEADER_KEY:
-            raise ValueError("Beatoven API key not configured")
-            
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"{BACKEND_V1_API_URL}/tracks/compose",
-                json=request_data,
-                headers={"Authorization": f"Bearer {BACKEND_API_HEADER_KEY}"}
-            ) as response:
-                if response.status != 200:
-                    error_text = await response.text()
-                    raise Exception(f"API error {response.status}: {error_text}")
-                data = await response.json()
-                return data.get("task_id")
-    except asyncio.TimeoutError:
-        return None
-    except Exception:
-        return None
-
-async def get_track_status(task_id):
-    """Check the status of a track composition."""
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                f"{BACKEND_V1_API_URL}/tasks/{task_id}",
-                headers={"Authorization": f"Bearer {BACKEND_API_HEADER_KEY}"},
-                timeout=aiohttp.ClientTimeout(total=10)
-            ) as response:
-                response.raise_for_status()
-                return await response.json()
-    except Exception:
-        return {"status": "failed"}
-
-async def play_audio_from_url(url):
-    """Directly play audio from a URL in Streamlit."""
-    try:
-        # Display the audio player with the direct URL
-        st.audio(url, format='audio/wav')
-        return True
-    except Exception:
-        return False
-
-async def watch_task_status(task_id):
-    """Monitor the status of a track generation task."""
-    try:
-        while True:
-            track_status = await get_track_status(task_id)
-            if track_status["status"] == "composed":
-                url = track_status["meta"]["track_url"]
-                await play_audio_from_url(url)
-                st.success("✅ Music generated successfully!")
-                break
-            elif track_status["status"] == "failed":
-                st.error("Music generation failed.")
-                break
-            await asyncio.sleep(10)
-    except Exception:
-        pass
-
 
 async def create_and_compose(genre):
-    """Create and compose a new track of the specified genre."""
-    if not BACKEND_API_HEADER_KEY:
-        st.error("❌ Music generation is not available. Missing API key.")
-        return False
+    """Create and compose a new track of the specified genre using Lyria."""
+    if not API_KEY:
+        st.error("❌ Music generation is not available. Missing Lyria API key.")
+        return None
 
     try:
-        with st.spinner('🎵 Composing your personalized music...'):
-            track_meta = {
-                "prompt": {
-                    "text": GENRE_PROMPTS.get(genre, "Compose a melody"),
-                    "genre": genre
-                },
-                "format": "wav"
-            }
-
-            task_id = await compose_track(track_meta)
-            if not task_id:
-                st.error("Failed to start music generation.")
-                return False
-
-            await watch_task_status(task_id)
-            return True
-
-    except Exception:
-        return False
+        #with st.spinner('🎵 Composing your personalized music...'):
+        filename = await generate_genre_track(genre, duration_seconds=10)
+        if filename:
+            return filename
+        else:
+            st.error("Failed to generate music.")
+            return None
+    except Exception as e:
+        st.error(f"❌ Error in music generation: {str(e)}")
+        return None
