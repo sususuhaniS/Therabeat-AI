@@ -46,119 +46,49 @@ async def home_page():
     
     # Set background color
     
-    st.markdown("""
-     
+   st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+
+    /* 1. Global App Background */
     .stApp {
         background:
             radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
             radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
             radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
     }
-    .welcome-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 70vh;
-        text-align: center;
-        color: white;
-    }
-    .main-title {
-        font-size: 4rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    .subtitle {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        opacity: 0.9;
-        max-width: 600px;
-        line-height: 1.6;
-    }
-    .feature-cards {
-        display: flex;
-        gap: 2rem;
-        margin-top: 3rem;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: stretch;
-    }
-    .feature-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 2rem;
-        width: 280px;
-        min-height: 200px;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-    .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-    .feature-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    .feature-desc {
-        opacity: 0.8;
-        font-size: 0.9rem;
-    }
-    st.markdown("")
-    
-   <style>
-}
- """, unsafe_allow_html=True)
-    
- # Welcome content
-    st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
 
+    /* 2. Welcome Container */
     .welcome-container {
         font-family: 'Inter', sans-serif;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 70vh;
+        min-height: 80vh;
         text-align: center;
         color: white;
+        padding: 20px;
     }
 
-    /* Top line: REIMAGINING MUSIC THERAPY */
+    /* 3. Typography */
     .top-eyebrow {
         font-size: 14px;
-        letter-spacing: 8px; /* High spacing like the image */
+        letter-spacing: 8px;
         text-transform: uppercase;
         color: #22D3EE;
         font-weight: 700;
         margin-bottom: 25px;
     }
 
-    /* Main Title: TheraBeat AI */
     .main-hero-title {
-        font-size: 5.5rem; /* Large punchy size */
+        font-size: 5.5rem;
         font-weight: 800;
-        line-height: 1;
+        line-height: 1.1;
         margin-bottom: 25px;
         letter-spacing: -2px;
     }
 
-    /* The "AI" part with the gradient */
     .gradient-text {
         background: linear-gradient(135deg, #ffffff 30%, #22D3EE 100%);
         -webkit-background-clip: text;
@@ -166,35 +96,62 @@ async def home_page():
         margin-left: 10px;
     }
 
-    /* Subtitle text */
     .subtitle-desc {
-        font-size: 1.5rem;
-        max-width: 800px;
+        font-size: 1.2rem;
+        max-width: 700px;
         margin: 0 auto 3rem auto;
-        opacity: 0.9;
+        opacity: 0.8;
         font-weight: 400;
-        line-height: 1.4;
+        line-height: 1.6;
     }
 
-    /* Feature Cards logic remains the same but updated for style */
+    /* 4. Feature Cards - THE FIX */
     .feature-cards {
         display: flex;
+        flex-direction: row; /* Forces horizontal layout */
         gap: 2rem;
         margin-top: 1rem;
         justify-content: center;
+        flex-wrap: wrap; /* Allows wrapping on small screens */
     }
+
     .feature-card {
         background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 2rem;
-        width: 280px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 40px 30px;
+        width: 300px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.3s ease;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
+
     .feature-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-10px);
         background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .feature-icon {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+    }
+
+    .feature-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+        color: white;
+    }
+
+    .feature-desc {
+        opacity: 0.6;
+        font-size: 0.95rem;
+        line-height: 1.5;
     }
     </style>
 
@@ -209,18 +166,18 @@ async def home_page():
         
         <div class="feature-cards">
             <div class="feature-card">
-                <div class="feature-icon" style="font-size: 3rem; margin-bottom: 1rem;">🎵</div>
-                <div class="feature-title" style="font-weight: bold; font-size: 1.2rem;">AI Music</div>
-                <div class="feature-desc" style="opacity: 0.7; font-size: 0.9rem;">Generate personalized music based on your mood</div>
+                <div class="feature-icon">🎵</div>
+                <div class="feature-title">AI Music</div>
+                <div class="feature-desc">Generate personalized music tracks based on your unique mood and emotional state.</div>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="font-size: 3rem; margin-bottom: 1rem;">🎧</div>
-                <div class="feature-title" style="font-weight: bold; font-size: 1.2rem;">Spotify Playlists</div>
-                <div class="feature-desc" style="opacity: 0.7; font-size: 0.9rem;">Curated playlists tailored to your emotional state</div>
+                <div class="feature-icon">🎧</div>
+                <div class="feature-title">Spotify Playlists</div>
+                <div class="feature-desc">Get curated Spotify collections tailored to help you navigate your emotional journey.</div>
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
     
 async def main():
     # Initialize session state
