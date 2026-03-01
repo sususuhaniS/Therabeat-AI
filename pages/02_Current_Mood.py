@@ -56,20 +56,23 @@ div.stButton > button:hover {
     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
 }
 
-div.form_submit_button > form_submit_button {
+/* 5. THE BUTTON: Targets st.form_submit_button */
+/* This kills the orange/red and forces Cyan */
+div.stFormSubmitButton > button {
     background-color: #22D3EE !important;
-    color: #000000 !important; /* Dark text for readability */
+    color: #000000 !important; /* Black text for better contrast on Cyan */
     border: none !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
+    width: 100%; /* Optional: makes button full width of the form */
     font-weight: bold !important;
-    transition: all 0.2s ease-in-out !important;
+    padding: 0.6rem 2rem !important;
+    border-radius: 8px !important;
 }
 
-/* 6. BUTTON: Hover Effect */
-div.form_submit_button > form_submit_button:hover {
-    background-color: #22D3EE !important;
-    color: #000000 !important; /* Dark text for readability */
+/* 6. BUTTON HOVER: Light up on mouseover */
+div.stFormSubmitButton > button:hover {
+    background-color: #ffffff !important;
+    color: #22D3EE !important;
+    border: 1px solid #22D3EE !important;
     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
 }
 
