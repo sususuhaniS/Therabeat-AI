@@ -15,38 +15,39 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* 2. THE FIX: Target the 'Progress' bar specifically */
-/* We use [data-active="true"] or the first-child of the inner track */
-[data-testid="stSlider"] [data-baseweb="slider"] div div div:first-child {
+/* 2. THE NUCLEAR FIX FOR THE TRACK */
+/* This targets the 'Progress' bar by looking for the first div with a background */
+[data-testid="stSlider"] [data-baseweb="slider"] div + div div:first-child {
+    background: #22D3EE !important;
     background-color: #22D3EE !important;
-    background-image: none !important; /* THIS KILLS THE ORANGE GRADIENT */
-}
-
-/* 3. RESET THE UNFILLED TRACK */
-/* This targets the background track to keep it the default dark grey */
-[data-testid="stSlider"] [data-baseweb="slider"] > div > div {
-    background-color: #31333F !important; 
     background-image: none !important;
 }
 
-/* 4. THE THUMB (Circle) */
-[data-testid="stSlider"] [role="slider"] {
+/* 3. RESET THE UNFILLED TRACK (The part after the knob) */
+[data-testid="stSlider"] [data-baseweb="slider"] > div > div {
+    background: rgba(151, 166, 195, 0.25) !important;
+    background-image: none !important;
+}
+
+/* 4. THE THUMB (The Circle) */
+[data-testid="stSlider"] div[role="slider"] {
     background-color: #22D3EE !important;
     border: 2px solid white !important;
-    box-shadow: none !important;
+    box-shadow: 0 0 8px rgba(34, 211, 238, 0.8) !important;
 }
 
-/* 5. CLEAN UP LABELS */
-[data-testid="stSlider"] [role="slider"] > div {
+/* 5. FIX THE FLOATING LABELS */
+[data-testid="stSlider"] div[role="slider"] > div {
     color: white !important;
     background-color: transparent !important;
+    font-size: 14px !important;
 }
 
-/* Hide those tiny red tick marks if they appear at the ends */
-[data-testid="stSlider"] [data-baseweb="slider"] div {
-    border-color: transparent !important;
+/* 6. KILL THE RED BORDER/OUTLINE ON CLICK */
+[data-testid="stSlider"] [data-baseweb="slider"] *:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
