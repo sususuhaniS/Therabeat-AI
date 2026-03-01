@@ -81,7 +81,7 @@ st.markdown("""
         font-size: 5rem; /* Slightly smaller for tighter fit */
         font-weight: 800;
         line-height: 1;
-        margin-bottom: 20px;
+        margin-bottom:100px;
         letter-spacing: -2px;
     }
 
