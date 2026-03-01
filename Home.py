@@ -74,6 +74,7 @@ st.markdown("""
         color: #22D3EE;
         font-weight: 700;
         margin-bottom: 15px; /* Reduced margin */
+        margin-top: 20px;
     }
 
     .main-hero-title {
@@ -94,7 +95,7 @@ st.markdown("""
     .subtitle-desc {
         font-size: 1.2rem;
         max-width: 700px;
-        margin-bottom: 40px; /* Changed from margin-top to margin-bottom */
+        margin-bottom: 20px; /* Changed from margin-top to margin-bottom */
         opacity: 0.8;
         font-weight: 400;
         line-height: 1.5;
