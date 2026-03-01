@@ -43,134 +43,134 @@ def initialize_spotify():
 
 async def home_page():
     """Display home page with welcome message."""
-  st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
-
-.stApp {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.welcome-container {
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;
-    text-align: center;
-    color: white;
-}
-
-/* Top eyebrow text */
-.top-eyebrow {
-    font-size: 14px;
-    letter-spacing: 8px;
-    text-transform: uppercase;
-    color: #22D3EE;
-    font-weight: 700;
-    margin-bottom: 25px;
-}
-
-/* Main hero title */
-.main-hero-title {
-    font-size: 5.5rem;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 25px;
-    letter-spacing: -2px;
-}
-
-/* Gradient AI text */
-.gradient-text {
-    background: linear-gradient(135deg, #ffffff 30%, #22D3EE 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-left: 10px;
-}
-
-/* Subtitle */
-.subtitle-desc {
-    font-size: 1.5rem;
-    max-width: 800px;
-    margin: 0 auto 3rem auto;
-    opacity: 0.9;
-    font-weight: 400;
-    line-height: 1.4;
-}
-
-/* Feature cards */
-.feature-cards {
-    display: flex;
-    gap: 2rem;
-    margin-top: 3rem;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.feature-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 2rem;
-    width: 280px;
-    min-height: 200px;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.feature-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-.feature-desc {
-    opacity: 0.85;
-    font-size: 0.95rem;
-}
-</style>
-
-<div class="welcome-container">
-    <div class="top-eyebrow">Reimagining Music Therapy</div>
-
-    <div class="main-hero-title">
-        TheraBeat<span class="gradient-text">AI</span>
-    </div>
-
-    <div class="subtitle-desc">
-        Your personalized journey to mental wellness through the power of generative audio landscapes.
-    </div>
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
     
-    <div class="feature-cards">
-        <div class="feature-card">
-            <div class="feature-icon">🎵</div>
-            <div class="feature-title">AI Music</div>
-            <div class="feature-desc">
-                Generate personalized music tracks based on your unique mood and emotional state.
-            </div>
+    .stApp {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .welcome-container {
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+        text-align: center;
+        color: white;
+    }
+    
+    /* Top eyebrow text */
+    .top-eyebrow {
+        font-size: 14px;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        color: #22D3EE;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+    
+    /* Main hero title */
+    .main-hero-title {
+        font-size: 5.5rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 25px;
+        letter-spacing: -2px;
+    }
+    
+    /* Gradient AI text */
+    .gradient-text {
+        background: linear-gradient(135deg, #ffffff 30%, #22D3EE 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-left: 10px;
+    }
+    
+    /* Subtitle */
+    .subtitle-desc {
+        font-size: 1.5rem;
+        max-width: 800px;
+        margin: 0 auto 3rem auto;
+        opacity: 0.9;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+    
+    /* Feature cards */
+    .feature-cards {
+        display: flex;
+        gap: 2rem;
+        margin-top: 3rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .feature-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        width: 280px;
+        min-height: 200px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-desc {
+        opacity: 0.85;
+        font-size: 0.95rem;
+    }
+    </style>
+    
+    <div class="welcome-container">
+        <div class="top-eyebrow">Reimagining Music Therapy</div>
+    
+        <div class="main-hero-title">
+            TheraBeat<span class="gradient-text">AI</span>
         </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">🎧</div>
-            <div class="feature-title">Spotify Playlists</div>
-            <div class="feature-desc">
-                Get curated Spotify collections tailored to help you navigate your emotional journey.
+    
+        <div class="subtitle-desc">
+            Your personalized journey to mental wellness through the power of generative audio landscapes.
+        </div>
+        
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="feature-icon">🎵</div>
+                <div class="feature-title">AI Music</div>
+                <div class="feature-desc">
+                    Generate personalized music tracks based on your unique mood and emotional state.
+                </div>
+            </div>
+    
+            <div class="feature-card">
+                <div class="feature-icon">🎧</div>
+                <div class="feature-title">Spotify Playlists</div>
+                <div class="feature-desc">
+                    Get curated Spotify collections tailored to help you navigate your emotional journey.
+                </div>
             </div>
         </div>
     </div>
-</div>
 """, unsafe_allow_html=True)
     
 async def main():
