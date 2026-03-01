@@ -220,7 +220,7 @@ async def main():
         </style>
         """, unsafe_allow_html=True)
         
-        if st.sidebar.button("🚪 Logout", type="secondary"):
+        if st.sidebar.button("Logout", type="secondary"):
             logout()
             st.rerun()
         
