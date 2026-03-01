@@ -75,7 +75,7 @@ else:
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.write("Generate a unique AI-composed track based on your mood and preferences.")
+        st.write("Generate a unique AI-composed track based on your mental health ratings and preferences.")
         
         if st.button("🎼 Generate AI Music", key="generate_ai_music", type="primary"):
             with st.spinner("Generating your personalized music..."):
@@ -86,7 +86,7 @@ else:
                     st.session_state.music_history = []
                 st.session_state.music_history.append((predicted_genre, datetime.now().strftime("%Y-%m-%d %H:%M"), filename))
                 
-                st.success("✅ Music generated successfully!")
+                st.success("Music generated successfully!")
                 
                 # Display music player
                 st.subheader("🎵 Your Generated Music")
@@ -95,13 +95,13 @@ else:
                 # Provide download option
                 with open(filename, 'rb') as audio_file:
                     st.download_button(
-                        label="📥 Download Music",
+                        label="Download Music",
                         data=audio_file.read(),
                         file_name=f"{predicted_genre}_track.wav",
                         mime="audio/wav"
                     )
             else:
-                st.error("❌ Failed to generate music. Please try again.")
+                st.error("Failed to generate music. Please try again.")
     
     with col2:
         st.subheader("Music History")
