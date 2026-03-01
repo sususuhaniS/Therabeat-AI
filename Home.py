@@ -117,7 +117,67 @@ async def home_page():
         opacity: 0.8;
         font-size: 0.9rem;
     }
-    </style>
+    st.markdown("")
+    
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+
+    .hero-container {
+        font-family: 'Inter', sans-serif;
+        text-align: center;
+        padding: 40px 0;
+        color: white;
+    }
+
+    /* Top line: REIMAGINING MUSIC THERAPY */
+    .top-eyebrow {
+        font-size: 14px;
+        letter-spacing: 8px; /* High spacing like in your image */
+        text-transform: uppercase;
+        color: #22D3EE; /* Cyan color */
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    /* Main Title: TheraBeat AI */
+    .main-hero-title {
+        font-size: 80px;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* The "AI" part with the gradient */
+    .gradient-text {
+        background: linear-gradient(135deg, #ffffff 0%, #22D3EE 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Bottom Subtitle */
+    .hero-subtitle {
+        font-size: 20px;
+        opacity: 0.8;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.5;
+        font-weight: 400;
+    }
+
+
+<div class="hero-container">
+    <div class="top-eyebrow">Reimagining Music Therapy</div>
+    <div class="main-hero-title">
+        <span>TheraBeat</span><span class="gradient-text">AI</span>
+    </div>
+    <div class="hero-subtitle">
+        Your personalized journey to mental wellness through the power of generative audio landscapes.
+    </div>
+</div>
+</style>
     """, unsafe_allow_html=True)
     
     # Welcome content
