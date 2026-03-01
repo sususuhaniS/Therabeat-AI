@@ -95,7 +95,7 @@ else:
         
         # Quick navigation to mood page
         st.markdown("---")
-        st.info("📊 **Want to update your current mood or analyze music preferences?** Navigate to 'Current Mood' page to track your emotional state and get personalized music recommendations.")
+        st.info("**Want to update your current mood or analyze music preferences?** Navigate to 'Current Mood' page to track your emotional state and get personalized music recommendations.")
 
     # Get user data from session state
     if 'user_profile' in st.session_state and 'model' in st.session_state:
