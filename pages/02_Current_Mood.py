@@ -19,7 +19,7 @@ st.markdown("""
     background-color: #22D3EE !important;
 }
 
-[data-testid="stSlider"] div[role="slider"]::before {
+[data-testid="stSlider"] div[role="slider"]: {
     background-color: #22D3EE !important;
     border: 2px solid white;
 }
