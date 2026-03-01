@@ -99,38 +99,48 @@ st.markdown("""
         font-weight: 400;
         line-height: 1.5;
     }
-
     .feature-cards {
         display: flex;
-        gap: 1.5rem;
+        gap: 2rem;
+        margin-top: 3rem;
         flex-wrap: wrap;
         justify-content: center;
-        width: 100%;
+        align-items: stretch;
     }
-
     .feature-card {
-        background: rgba(255, 255, 255, 0.05); /* Made slightly subtler */
+        background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 25px;
-        width: 260px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.3s ease;
+        border-radius: 15px;
+        padding: 2rem;
+        width: 280px;
+        min-height: 200px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        justify-content: center;
+        al
+        ign-items: center;
     }
-
     .feature-card:hover {
-        transform: translateY(-8px);
-        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
-
-    .feature-icon { font-size: 2.5rem; margin-bottom: 15px; }
-    .feature-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
-    .feature-desc { opacity: 0.7; font-size: 0.85rem; line-height: 1.4; }
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .feature-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .feature-desc {
+        opacity: 0.8;
+        font-size: 0.9rem;
+    }
     </style>
-    
     <div class="welcome-container">
         <div class="top-eyebrow">Reimagining Music Therapy</div>
         <div class="main-hero-title">
