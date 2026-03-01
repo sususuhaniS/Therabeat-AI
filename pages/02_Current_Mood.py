@@ -51,8 +51,8 @@ div.stButton > button {
 
 /* 6. BUTTON: Hover Effect */
 div.stButton > button:hover {
-    background-color: #ffffff !important; /* Turns white on hover */
-    color: #22D3EE !important;
+    background-color: #22D3EE !important;
+    color: #000000 !important; /* Dark text for readability */
     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
 }
 
