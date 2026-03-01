@@ -160,14 +160,6 @@ async def home_page():
         font-weight: 400;
         line-height: 1.4;
     }
-
-
-    
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Welcome content
-    st.markdown("""
     <div class="welcome-container">
         <div class="top-eyebrow">Reimagining Music Therapy</div>
         <div class="main-hero-title">
@@ -190,7 +182,11 @@ async def home_page():
             </div>
         </div>
     </div>
+
+    
+    </style>
     """, unsafe_allow_html=True)
+    
 async def main():
     # Initialize session state
     if 'user_info' not in st.session_state:
