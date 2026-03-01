@@ -55,17 +55,16 @@ st.markdown("""
             radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%) !important;
     }
 
-    /* 2. Container and Typography */
-    .welcome-container {
+ .welcome-container {
         font-family: 'Inter', sans-serif;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-height: 80vh;
+        min-height: 70vh; /* Reduced height to pull content up */
         text-align: center;
         color: white;
-        padding: 40px 20px;
+        padding: 20px;
     }
 
     .top-eyebrow {
@@ -74,14 +73,14 @@ st.markdown("""
         text-transform: uppercase;
         color: #22D3EE;
         font-weight: 700;
-        margin-bottom: 25px;
+        margin-bottom: 15px; /* Reduced margin */
     }
 
     .main-hero-title {
-        font-size: 5.5rem;
+        font-size: 5rem; /* Slightly smaller for tighter fit */
         font-weight: 800;
-        line-height: 1.1;
-        margin-bottom: 25px;
+        line-height: 1;
+        margin-bottom: 20px;
         letter-spacing: -2px;
     }
 
@@ -93,55 +92,45 @@ st.markdown("""
     }
 
     .subtitle-desc {
-        font-size: 1.25rem;
-        max-width: 750px;
-        margin-top: 4rem ;
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin-bottom: 40px; /* Changed from margin-top to margin-bottom */
         opacity: 0.8;
         font-weight: 400;
-        line-height: 1.6;
+        line-height: 1.5;
     }
 
-      .feature-cards {
+    .feature-cards {
         display: flex;
-        gap: 2rem;
+        gap: 1.5rem;
         flex-wrap: wrap;
         justify-content: center;
-        align-items: stretch;
+        width: 100%;
     }
+
     .feature-card {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05); /* Made slightly subtler */
         backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 2rem;
-        width: 280px;
-        min-height: 200px;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 20px;
+        padding: 25px;
+        width: 260px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s ease;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
     }
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-    .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-    .feature-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    .feature-desc {
-        opacity: 0.8;
-        font-size: 0.9rem;
-    }
-    </style>
 
+    .feature-card:hover {
+        transform: translateY(-8px);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .feature-icon { font-size: 2.5rem; margin-bottom: 15px; }
+    .feature-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+    .feature-desc { opacity: 0.7; font-size: 0.85rem; line-height: 1.4; }
+    </style>
+    
     <div class="welcome-container">
         <div class="top-eyebrow">Reimagining Music Therapy</div>
         <div class="main-hero-title">
