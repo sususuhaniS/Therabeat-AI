@@ -72,8 +72,8 @@ div.stFormSubmitButton > button {
 
 /* 6. BUTTON HOVER: Light up on mouseover */
 div.stFormSubmitButton > button:hover {
-    background-color: #ffffff !important;
-    color: #64E9FA !important;
+    background-color: #64E9FA !important;
+    color: #000000 !important; /* Dark text for readability */
     border: 1px solid #64E9FA !important;
     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
 }
