@@ -47,10 +47,12 @@ async def home_page():
     # Set background color
     st.markdown("""
     <style>
-    .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
+    .stApp 
     .welcome-container {
+        background:
+            radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
         display: flex;
         flex-direction: column;
         justify-content: center;
