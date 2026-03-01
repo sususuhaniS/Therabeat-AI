@@ -8,35 +8,39 @@ from login import is_authenticated, show_login_page
 st.markdown("""
 <style>
 
-/* Remove orange accent dot on left */
-[data-testid="stSlider"] div[data-baseweb="slider"] > div > div:first-child::before {
-    display: none !important;
-}
+/* ===== SLIDER TRACK ===== */
 
-/* Make filled track cyan */
+/* Filled portion */
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div:first-child {
     background-color: #22D3EE !important;
 }
 
-/* Keep unfilled track default (dark gray) */
+/* Unfilled portion */
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div:last-child {
-    background-color: #2f2f2f !important;
+    background-color: rgba(255,255,255,0.15) !important;
 }
 
-/* Make thumb clean */
+/* ===== SLIDER THUMB ===== */
+
 [data-testid="stSlider"] div[role="slider"] {
     background-color: #22D3EE !important;
     border: 2px solid white !important;
     box-shadow: none !important;
 }
 
-/* Remove the ugly value bubble background */
+/* ===== REMOVE MIN/MAX BOXES (0 and 10) ===== */
+
+[data-testid="stSliderTickBar"] {
+    display: none !important;
+}
+
+/* ===== REMOVE TOOLTIP BACKGROUND ===== */
+
 [data-testid="stSlider"] div[data-baseweb="tooltip"] {
     background: transparent !important;
     box-shadow: none !important;
 }
 
-/* Make number text white and clean */
 [data-testid="stSlider"] div[data-baseweb="tooltip"] span {
     background: transparent !important;
     color: white !important;
@@ -45,6 +49,7 @@ st.markdown("""
 
 </style>
 """, unsafe_allow_html=True)
+
 # Check authentication before showing page
 if not is_authenticated():
     show_login_page()
