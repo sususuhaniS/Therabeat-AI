@@ -7,48 +7,44 @@ from login import is_authenticated, show_login_page
 
 st.markdown("""
 <style>
-/* 1. The Main App Background */
-.stApp {
-    background: 
-        radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
+
+/* Remove orange accent dot on left */
+[data-testid="stSlider"] div[data-baseweb="slider"] > div > div:first-child::before {
+    display: none !important;
 }
 
-/* 2. FIX THE FILL: Make the left side Cyan and REMOVE the orange gradient */
-[data-testid="stSlider"] [data-baseweb="slider"] div div div:first-child {
+/* Make filled track cyan */
+[data-testid="stSlider"] div[data-baseweb="slider"] > div > div:first-child {
     background-color: #22D3EE !important;
-    background-image: none !important; 
 }
 
-/* 3. FIX THE END: Keep the unfilled part the default dark grey */
-[data-testid="stSlider"] [data-baseweb="slider"] > div > div {
-    background-color: #31333F !important;
-    background-image: none !important;
+/* Keep unfilled track default (dark gray) */
+[data-testid="stSlider"] div[data-baseweb="slider"] > div > div:last-child {
+    background-color: #2f2f2f !important;
 }
 
-/* 3. The Slider Thumb (The Circle) */
+/* Make thumb clean */
 [data-testid="stSlider"] div[role="slider"] {
     background-color: #22D3EE !important;
     border: 2px solid white !important;
-    box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+    box-shadow: none !important;
 }
 
-/* 4. Fix the labels (the numbers above the thumb) */
-[data-testid="stSlider"] div[role="slider"] > div {
-    color: white !important; /* Makes the number readable */
-    background-color: transparent !important; /* Removes the cyan box behind the number */
-    font-weight: bold;
+/* Remove the ugly value bubble background */
+[data-testid="stSlider"] div[data-baseweb="tooltip"] {
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-/* 5. The Tick Marks / Unfilled Track */
-[data-testid="stSlider"] div[data-baseweb="slider"] > div > div {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+/* Make number text white and clean */
+[data-testid="stSlider"] div[data-baseweb="tooltip"] span {
+    background: transparent !important;
+    color: white !important;
+    font-weight: 600;
 }
 
 </style>
 """, unsafe_allow_html=True)
-
 # Check authentication before showing page
 if not is_authenticated():
     show_login_page()
