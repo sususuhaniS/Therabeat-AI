@@ -13,6 +13,44 @@ st.markdown("""
             radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
             radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
     }
+    /* 5. BUTTON: Change 'Update Mood' to Cyan */
+div.stButton > button {
+    background-color: #22D3EE !important;
+    color: #000000 !important; /* Dark text for readability */
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: bold !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* 6. BUTTON: Hover Effect */
+div.stButton > button:hover {
+    background-color: #64E9FA !important;
+    color: #000000 !important; /* Dark text for readability */
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+}
+
+/* 5. THE BUTTON: Targets st.form_submit_button */
+/* This kills the orange/red and forces Cyan */
+div.stFormSubmitButton > button {
+    background-color: #22D3EE !important;
+    color: #000000 !important; /* Black text for better contrast on Cyan */
+    border: none !important;
+    width: 100%; /* Optional: makes button full width of the form */
+    font-weight: bold !important;
+    padding: 0.6rem 2rem !important;
+    border-radius: 8px !important;
+}
+
+/* 6. BUTTON HOVER: Light up on mouseover */
+div.stFormSubmitButton > button:hover {
+    background-color: #64E9FA !important;
+    color: #000000 !important; /* Dark text for readability */
+    border: 1px solid #64E9FA !important;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+}
+
 }
 </style>
 """, unsafe_allow_html=True)
