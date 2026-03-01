@@ -86,7 +86,7 @@ st.markdown("""
     }
 
     .gradient-text {
-        background: linear-gradient(135deg, #ffffff 30%, #22D3EE 100%);
+        background: linear-gradient(135deg, #22D3EE 0%, #3B82F6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         display: inline-block;
