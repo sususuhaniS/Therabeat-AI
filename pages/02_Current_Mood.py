@@ -18,6 +18,7 @@ st.markdown("""
 /* 2. Force the filled track to Cyan (removes the red) */
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div > div:first-child {
     background-color: #22D3EE !important;
+     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
 }
 /* 3. RESET THE UNFILLED TRACK (The part after the knob) */
 [data-testid="stSlider"] [data-baseweb="slider"] > div > div {
@@ -29,6 +30,7 @@ st.markdown("""
     background-color: #22D3EE !important;
     border: 2px solid white !important;
     box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
 }
 
 /* 4. Fix the labels (the numbers above the thumb) */
