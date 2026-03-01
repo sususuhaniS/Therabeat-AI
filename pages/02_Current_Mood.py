@@ -7,6 +7,7 @@ from login import is_authenticated, show_login_page
 
 st.markdown("""
 <style>
+/* 1. The Main App Background */
 .stApp {
     background: 
         radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
@@ -14,24 +15,33 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* 1. Target the 'filled' part of the slider track */
-[data-testid="stSlider"] [data-baseweb="slider"] div > div > div > div {
-    background-color: #00FFFF !important; /* Pure Cyan */
+/* 2. Force the filled track to Cyan (removes the red) */
+[data-testid="stSlider"] div[data-baseweb="slider"] > div > div > div:first-child {
+    background-color: #22D3EE !important;
 }
 
-/* 2. Target the slider thumb (the circle) */
+/* 3. The Slider Thumb (The Circle) */
 [data-testid="stSlider"] div[role="slider"] {
-    background-color: #00FFFF !important;
+    background-color: #22D3EE !important;
     border: 2px solid white !important;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
 }
 
-/* 3. Optional: Change the unselected track color to something darker */
-[data-testid="stSlider"] [data-baseweb="slider"] > div > div {
-    background-color: rgba(255, 255, 255, 0.2) !important;
+/* 4. Fix the labels (the numbers above the thumb) */
+[data-testid="stSlider"] div[role="slider"] > div {
+    color: white !important; /* Makes the number readable */
+    background-color: transparent !important; /* Removes the cyan box behind the number */
+    font-weight: bold;
+}
+
+/* 5. The Tick Marks / Unfilled Track */
+[data-testid="stSlider"] div[data-baseweb="slider"] > div > div {
+    background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 # Check authentication before showing page
 if not is_authenticated():
