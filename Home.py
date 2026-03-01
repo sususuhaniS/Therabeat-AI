@@ -74,14 +74,14 @@ st.markdown("""
         color: #22D3EE;
         font-weight: 700;
         margin-bottom: 15px; /* Reduced margin */
-        margin-top: 20px;
+        margin-top: 40px;
     }
 
     .main-hero-title {
         font-size: 5rem; /* Slightly smaller for tighter fit */
         font-weight: 800;
         line-height: 1;
-        margin-bottom:100px;
+        margin-bottom:20px;
         letter-spacing: -2px;
     }
 
@@ -95,7 +95,7 @@ st.markdown("""
     .subtitle-desc {
         font-size: 1.2rem;
         max-width: 700px;
-        margin-bottom: 20px; /* Changed from margin-top to margin-bottom */
+        margin-bottom: 10px; /* Changed from margin-top to margin-bottom */
         opacity: 0.8;
         font-weight: 400;
         line-height: 1.5;
