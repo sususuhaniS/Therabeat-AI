@@ -145,7 +145,7 @@ st.markdown("""
     <div class="welcome-container">
         <div class="top-eyebrow">Reimagining Music Therapy</div>
         <div class="main-hero-title">
-            TheraBeat<span class="gradient-text">AI</span>
+            TheraBeat<span class="gradient-text"> AI</span>
         </div>
         <div class="subtitle-desc">
             Your personalized journey to mental wellness through the power of generative audio landscapes.
