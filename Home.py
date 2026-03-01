@@ -151,8 +151,8 @@ st.markdown("""
         <div class="subtitle-desc">
             Your personalized journey to mental wellness through the power of generative audio landscapes.
         </div>
-        
-        <div class="feature-cards">
+    </div>
+    <div class="feature-cards">
             <div class="feature-card">
                 <div class="feature-icon">🎵</div>
                 <div class="feature-title">AI Music</div>
@@ -168,8 +168,7 @@ st.markdown("""
                 <div class="feature-title">Mood Tracking</div>
                 <div class="feature-desc">Track your emotional journey over time</div>
             </div>
-        </div>
-    </div>
+   </div>
 
 """, unsafe_allow_html=True)
     
