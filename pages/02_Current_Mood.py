@@ -7,7 +7,7 @@ from login import is_authenticated, show_login_page
 
 st.markdown("""
 <style>
-/* 1. The App Background */
+/* 1. The Background */
 .stApp {
     background: 
         radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
@@ -15,30 +15,25 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* 2. THE FIX: Target the track and the progress bar specifically */
-/* This targets the container that holds the track */
-[data-testid="stSlider"] [data-baseweb="slider"] > div {
-    background: transparent !important;
-}
-
-/* This targets the actual progress (the part to the left of the knob) */
-[data-testid="stSlider"] [data-baseweb="slider"] div div div:first-child {
+/* 2. KILL THE RED DOT AND THE FULL-LENGTH CYAN */
+/* This targets the specific 'active' progress bar */
+[data-testid="stSlider"] [data-baseweb="slider"] > div > div > div > div:first-child {
     background-color: #22D3EE !important;
-    background-image: none !important; /* Force out any default orange gradients */
 }
 
-/* 3. Reset the UNFILLED part (the part to the right of the knob) */
+/* 3. RESTORE DEFAULT DARK TRACK FOR UNFILLED PART */
+/* This ensures the rest of the bar stays the default dark grey */
 [data-testid="stSlider"] [data-baseweb="slider"] > div > div {
-    background-color: #31333F !important; /* Default Streamlit Dark Grey */
+    background-color: rgba(151, 166, 195, 0.25) !important;
 }
 
-/* 4. The Knob (Thumb) */
+/* 4. THE THUMB (The Circle) */
 [data-testid="stSlider"] div[role="slider"] {
     background-color: #22D3EE !important;
     border: 2px solid white !important;
 }
 
-/* 5. The Value Label (Numbers) */
+/* 5. FIX THE FLOATING LABEL BOX */
 [data-testid="stSlider"] div[role="slider"] > div {
     color: white !important;
     background-color: transparent !important;
