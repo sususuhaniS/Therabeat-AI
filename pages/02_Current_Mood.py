@@ -7,7 +7,7 @@ from login import is_authenticated, show_login_page
 
 st.markdown("""
 <style>
-/* 1. The Background */
+/* 1. App Background */
 .stApp {
     background: 
         radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
@@ -15,33 +15,40 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* 2. KILL THE RED DOT AND THE FULL-LENGTH CYAN */
-/* This targets the specific 'active' progress bar */
-[data-testid="stSlider"] [data-baseweb="slider"] > div > div > div > div:first-child {
+/* 2. THE FIX: Target the 'Progress' bar specifically */
+/* We use [data-active="true"] or the first-child of the inner track */
+[data-testid="stSlider"] [data-baseweb="slider"] div div div:first-child {
     background-color: #22D3EE !important;
+    background-image: none !important; /* THIS KILLS THE ORANGE GRADIENT */
 }
 
-/* 3. RESTORE DEFAULT DARK TRACK FOR UNFILLED PART */
-/* This ensures the rest of the bar stays the default dark grey */
+/* 3. RESET THE UNFILLED TRACK */
+/* This targets the background track to keep it the default dark grey */
 [data-testid="stSlider"] [data-baseweb="slider"] > div > div {
-    background-color: rgba(151, 166, 195, 0.25) !important;
+    background-color: #31333F !important; 
+    background-image: none !important;
 }
 
-/* 4. THE THUMB (The Circle) */
-[data-testid="stSlider"] div[role="slider"] {
+/* 4. THE THUMB (Circle) */
+[data-testid="stSlider"] [role="slider"] {
     background-color: #22D3EE !important;
     border: 2px solid white !important;
+    box-shadow: none !important;
 }
 
-/* 5. FIX THE FLOATING LABEL BOX */
-[data-testid="stSlider"] div[role="slider"] > div {
+/* 5. CLEAN UP LABELS */
+[data-testid="stSlider"] [role="slider"] > div {
     color: white !important;
     background-color: transparent !important;
 }
 
+/* Hide those tiny red tick marks if they appear at the ends */
+[data-testid="stSlider"] [data-baseweb="slider"] div {
+    border-color: transparent !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
-
 
 # Check authentication before showing page
 if not is_authenticated():
