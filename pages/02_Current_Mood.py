@@ -15,9 +15,10 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-[data-testid="stSlider"] div[data-baseweb="slider"] > div > div:first-child {
-    background-color: #22D3EE !important;
+[data-testid="stSlider"] div[data-baseweb="slider"] > div > div:last-child {
+    background-color: #2a2a2a !important;
 }
+
 
 /* Change the slider thumb (circle) */
 [data-testid="stSlider"] div[role="slider"] {
