@@ -43,129 +43,121 @@ def initialize_spotify():
 
 async def home_page():
     """Display home page with welcome message."""
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+    # Indent this entire block so it belongs to the function
+    st.markdown("""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
 
-    /* 1. Reset and Background - Using your preferred radial style */
-    .stApp {
-        background:
-            radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
-            radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%) !important;
-    }
+        .stApp {
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%) !important;
+        }
 
- .welcome-container {
-        font-family: 'Inter', sans-serif;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: auto;
-        text-align: center;
-        color: white;
-        padding: 20px;
-    }
+        .welcome-container {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: auto;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
 
-    .top-eyebrow {
-        font-size: 14px;
-        letter-spacing: 8px;
-        text-transform: uppercase;
-        color: #22D3EE;
-        font-weight: 700;
-        margin-bottom: 15px; /* Reduced margin */
-        margin-top: 40px;
-    }
+        .top-eyebrow {
+            font-size: 14px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: #22D3EE;
+            font-weight: 700;
+            margin-bottom: 15px;
+            margin-top: 40px;
+        }
 
-    .main-hero-title {
-        font-size: 5rem; /* Slightly smaller for tighter fit */
-        font-weight: 800;
-        line-height: 1;
-        margin-bottom:20px;
-        letter-spacing: -2px;
-    }
+        .main-hero-title {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom:20px;
+            letter-spacing: -2px;
+        }
 
-    .gradient-text {
-        background: linear-gradient(135deg, #22D3EE 0%, #3B82F6 100%);
-        margin-right: 10px;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: inline-block;
-    }
+        .gradient-text {
+            background: linear-gradient(135deg, #22D3EE 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
 
-    .subtitle-desc {
-        font-size: 1.2rem;
-        max-width: 700px;
-        margin-bottom: 10px; /* Changed from margin-top to margin-bottom */
-        opacity: 0.8;
-        font-weight: 400;
-        line-height: 1.5;
-    }
-    .feature-cards {
-        display: flex;
-        gap: 2rem;
-        margin-top: 3rem;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: stretch;
-    }
-    .feature-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 2rem;
-        width: 280px;
-        min-height: 200px;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        al
-        ign-items: center;
-    }
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-    .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-    .feature-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    .feature-desc {
-        opacity: 0.8;
-        font-size: 0.9rem;
-    }
-    </style>
-    <div class="welcome-container">
-        <div class="top-eyebrow">Reimagining Music Therapy</div>
-        <div class="main-hero-title">
-            TheraBeat<span class="gradient-text"> AI</span>
-        </div>
-        <div class="subtitle-desc">
-            Your personalized journey to mental wellness through the power of generative audio landscapes.
-        </div>
-    </div>
-    <div class="feature-cards">
-            <div class="feature-card">
-                <div class="feature-icon">🎵</div>
-                <div class="feature-title">AI Music</div>
-                <div class="feature-desc">Generate personalized music based on your mood and preferences</div>
+        .subtitle-desc {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 10px;
+            opacity: 0.8;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .feature-cards {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 280px;
+            min-height: 200px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .feature-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .feature-desc { opacity: 0.8; font-size: 0.9rem; }
+        </style>
+
+        <div class="welcome-container">
+            <div class="top-eyebrow">Reimagining Music Therapy</div>
+            <div class="main-hero-title">
+                TheraBeat<span class="gradient-text"> AI</span>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎧</div>
-                <div class="feature-title">Spotify Playlists</div>
-                <div class="feature-desc">Get curated playlists tailored to your emotional state</div>
+            <div class="subtitle-desc">
+                Your personalized journey to mental wellness through the power of generative audio landscapes.
             </div>
-   </div>
-
-""", unsafe_allow_html=True)
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <div class="feature-icon">🎵</div>
+                    <div class="feature-title">AI Music</div>
+                    <div class="feature-desc">Generate personalized music based on your mood and preferences</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎧</div>
+                    <div class="feature-title">Spotify Playlists</div>
+                    <div class="feature-desc">Get curated playlists tailored to your emotional state</div>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
     
 async def main():
     # Initialize session state
