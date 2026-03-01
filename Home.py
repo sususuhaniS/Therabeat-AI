@@ -103,8 +103,6 @@ st.markdown("""
 
       .feature-cards {
         display: flex;
-        gap: 2rem;
-        margin-top: 3rem;
         flex-wrap: wrap;
         justify-content: center;
         align-items: stretch;
