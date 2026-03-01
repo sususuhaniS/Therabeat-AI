@@ -56,6 +56,23 @@ div.stButton > button:hover {
     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
 }
 
+div.form_submit_button > form_submit_button {
+    background-color: #22D3EE !important;
+    color: #000000 !important; /* Dark text for readability */
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: bold !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* 6. BUTTON: Hover Effect */
+div.form_submit_button > form_submit_button:hover {
+    background-color: #22D3EE !important;
+    color: #000000 !important; /* Dark text for readability */
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
