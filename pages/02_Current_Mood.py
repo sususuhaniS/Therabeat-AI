@@ -19,6 +19,10 @@ st.markdown("""
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div > div:first-child {
     background-color: #22D3EE !important;
 }
+/* 3. RESET THE UNFILLED TRACK (The part after the knob) */
+[data-testid="stSlider"] [data-baseweb="slider"] > div > div {
+    background-image: none !important;
+}
 
 /* 3. The Slider Thumb (The Circle) */
 [data-testid="stSlider"] div[role="slider"] {
