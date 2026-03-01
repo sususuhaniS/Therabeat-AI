@@ -119,88 +119,109 @@ async def home_page():
     }
     st.markdown("")
     
+   <style>
+}
+ """, unsafe_allow_html=True)
+    
+ # Welcome content
+    st.markdown("""
+    <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
 
-    .hero-container {
+    .welcome-container {
         font-family: 'Inter', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
         text-align: center;
-        padding: 40px 0;
         color: white;
     }
 
     /* Top line: REIMAGINING MUSIC THERAPY */
     .top-eyebrow {
         font-size: 14px;
-        letter-spacing: 8px; /* High spacing like in your image */
+        letter-spacing: 8px; /* High spacing like the image */
         text-transform: uppercase;
-        color: #22D3EE; /* Cyan color */
+        color: #22D3EE;
         font-weight: 700;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 
     /* Main Title: TheraBeat AI */
     .main-hero-title {
-        font-size: 80px;
+        font-size: 5.5rem; /* Large punchy size */
         font-weight: 800;
         line-height: 1;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
+        margin-bottom: 25px;
+        letter-spacing: -2px;
     }
 
     /* The "AI" part with the gradient */
     .gradient-text {
-        background: linear-gradient(135deg, #ffffff 0%, #22D3EE 100%);
+        background: linear-gradient(135deg, #ffffff 30%, #22D3EE 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        margin-left: 10px;
     }
 
-    /* Bottom Subtitle */
-    .hero-subtitle {
-        font-size: 20px;
-        opacity: 0.8;
-        max-width: 700px;
-        margin: 0 auto;
-        line-height: 1.5;
+    /* Subtitle text */
+    .subtitle-desc {
+        font-size: 1.5rem;
+        max-width: 800px;
+        margin: 0 auto 3rem auto;
+        opacity: 0.9;
         font-weight: 400;
+        line-height: 1.4;
     }
 
+    /* Feature Cards logic remains the same but updated for style */
+    .feature-cards {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+        justify-content: center;
+    }
+    .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        width: 280px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s ease;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    </style>
 
-<div class="hero-container">
-    <div class="top-eyebrow">Reimagining Music Therapy</div>
-    <div class="main-hero-title">
-        <span>TheraBeat</span><span class="gradient-text">AI</span>
-    </div>
-    <div class="hero-subtitle">
-        Your personalized journey to mental wellness through the power of generative audio landscapes.
-    </div>
-</div>
-</style>
-    """, unsafe_allow_html=True)
-    
-    # Welcome content
-    st.markdown("""
     <div class="welcome-container">
-        <div class="main-title">Reimagining Music Therapy</div>
-        <div class="subtitle">TheraBeat AI</div>
-        <div class="subtitle">Your personalized journey to mental wellness through the power of generative audio landscapes.</div>
+        <div class="top-eyebrow">Reimagining Music Therapy</div>
+        <div class="main-hero-title">
+            TheraBeat<span class="gradient-text">AI</span>
+        </div>
+        <div class="subtitle-desc">
+            Your personalized journey to mental wellness through the power of generative audio landscapes.
+        </div>
+        
         <div class="feature-cards">
             <div class="feature-card">
-                <div class="feature-icon">🎵</div>
-                <div class="feature-title">AI Music</div>
-                <div class="feature-desc">Generate personalized music based on your mood and preferences</div>
+                <div class="feature-icon" style="font-size: 3rem; margin-bottom: 1rem;">🎵</div>
+                <div class="feature-title" style="font-weight: bold; font-size: 1.2rem;">AI Music</div>
+                <div class="feature-desc" style="opacity: 0.7; font-size: 0.9rem;">Generate personalized music based on your mood</div>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">🎧</div>
-                <div class="feature-title">Spotify Playlists</div>
-                <div class="feature-desc">Get curated playlists tailored to your emotional state</div>
+                <div class="feature-icon" style="font-size: 3rem; margin-bottom: 1rem;">🎧</div>
+                <div class="feature-title" style="font-weight: bold; font-size: 1.2rem;">Spotify Playlists</div>
+                <div class="feature-desc" style="opacity: 0.7; font-size: 0.9rem;">Curated playlists tailored to your emotional state</div>
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
-
+    
 async def main():
     # Initialize session state
     if 'user_info' not in st.session_state:
