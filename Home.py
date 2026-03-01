@@ -61,7 +61,7 @@ st.markdown("""
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-height: 70vh; /* Reduced height to pull content up */
+        min-height: auto;
         text-align: center;
         color: white;
         padding: 20px;
