@@ -91,7 +91,7 @@ div.stFormSubmitButton > button:hover {
 if not is_authenticated():
     show_login_page()
 else:
-    st.title("😊 Current Mood Management")
+    st.title(" Mental Health Management")
     
     user = st.session_state.get('user')
     if not user:
@@ -100,7 +100,7 @@ else:
         user_email = user['email']
         user_profile = get_user_profile(user_email) or {}
 
-        st.header("Update Your Mood")
+        st.header("Update Your Mental Health Ratings")
         
         with st.form("mood_update_form"):
             # We use int() to make sure Streamlit gets the right data type
@@ -132,15 +132,15 @@ else:
                 }
                 user_profile.update(mood_data)
                 if save_user_profile(user_email, user_profile):
-                    st.success("✅ Mood updated!")
+                    st.success("Ratings updated!")
                     st.rerun()
                     
                 else:
-                    st.error("❌ Failed to update mood.")
+                    st.error("❌ Failed to update ratings.")
             # --- END OF THE FORM ---
                         
     st.markdown("---")
-    st.header("🎵 Music Preferences Analysis")
+    st.header("Music Preferences Analysis")
     
     # Get model from session state
     model = st.session_state.get('model')
@@ -164,7 +164,7 @@ else:
     st.header("🧠 Mental Health Resources & Information")
     st.write("Understanding mental health conditions can help you better track your mood and seek appropriate support when needed.")
     
-    with st.expander("📘 Understanding Anxiety"):
+    with st.expander("Understanding Anxiety"):
         st.markdown("""
         **What to look for:**
         - Excessive worry or fear about everyday situations
@@ -184,7 +184,7 @@ else:
         - Crisis Text Line: Text HOME to 741741
         """)
     
-    with st.expander("📘 Understanding Depression"):
+    with st.expander("Understanding Depression"):
         st.markdown("""
         **What to look for:**
         - Persistent sad, anxious, or empty mood
@@ -206,7 +206,7 @@ else:
         - Mental Health America (MHA)
         """)
     
-    with st.expander("📘 Understanding Insomnia"):
+    with st.expander("Understanding Insomnia"):
         st.markdown("""
         **What to look for:**
         - Difficulty falling asleep
@@ -227,7 +227,7 @@ else:
         - Sleep Education by the AASM
         """)
     
-    with st.expander("📘 Understanding OCD (Obsessive-Compulsive Disorder)"):
+    with st.expander("Understanding OCD (Obsessive-Compulsive Disorder)"):
         st.markdown("""
         **What to look for:**
         **Obsessions:**
@@ -253,6 +253,6 @@ else:
         - Made of Millions Foundation
         """)
     
-    st.info("💡 **Note:** This information is for educational purposes only. If you're experiencing severe symptoms or having thoughts of self-harm, please contact a healthcare professional or emergency services immediately.")
+    st.info(" ‼️**Note:** This information is for educational purposes only. If you're experiencing severe symptoms or having thoughts of self-harm, please contact a healthcare professional or emergency services immediately.")
     
     
