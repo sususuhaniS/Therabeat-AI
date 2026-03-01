@@ -36,7 +36,7 @@ st.markdown("""
 
 /* 5. The Tick Marks / Unfilled Track */
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: transparent;
 }
 
 
