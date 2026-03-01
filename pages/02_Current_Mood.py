@@ -15,9 +15,16 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* 2. Force the filled track to Cyan (removes the red) */
-[data-testid="stSlider"] div[data-baseweb="slider"] > div > div > div:first-child {
+/* 2. FIX THE FILL: Make the left side Cyan and REMOVE the orange gradient */
+[data-testid="stSlider"] [data-baseweb="slider"] div div div:first-child {
     background-color: #22D3EE !important;
+    background-image: none !important; 
+}
+
+/* 3. FIX THE END: Keep the unfilled part the default dark grey */
+[data-testid="stSlider"] [data-baseweb="slider"] > div > div {
+    background-color: #31333F !important;
+    background-image: none !important;
 }
 
 /* 3. The Slider Thumb (The Circle) */
