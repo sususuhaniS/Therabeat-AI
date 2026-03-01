@@ -45,11 +45,12 @@ async def home_page():
     """Display home page with welcome message."""
     
     # Set background color
+# Combined Styling and Content - Replace your existing "Welcome content" block with this
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
 
-    /* 1. Global App Background */
+    /* 1. Reset and Background */
     .stApp {
         background:
             radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
@@ -57,20 +58,19 @@ st.markdown("""
             radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
     }
 
-    /* 2. Welcome Container */
+    /* 2. Hero Section */
     .welcome-container {
         font-family: 'Inter', sans-serif;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-height: 80vh;
+        min-height: 85vh;
         text-align: center;
         color: white;
-        padding: 20px;
+        padding: 40px 20px;
     }
 
-    /* 3. Typography */
     .top-eyebrow {
         font-size: 14px;
         letter-spacing: 8px;
@@ -84,7 +84,7 @@ st.markdown("""
         font-size: 5.5rem;
         font-weight: 800;
         line-height: 1.1;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
         letter-spacing: -2px;
     }
 
@@ -96,43 +96,42 @@ st.markdown("""
     }
 
     .subtitle-desc {
-        font-size: 1.2rem;
-        max-width: 700px;
-        margin: 0 auto 3rem auto;
+        font-size: 1.25rem;
+        max-width: 750px;
+        margin: 0 auto 4rem auto;
         opacity: 0.8;
-        font-weight: 400;
         line-height: 1.6;
     }
 
-    /* 4. Feature Cards - THE FIX */
+    /* 3. Feature Cards - THE FIX */
     .feature-cards {
         display: flex;
-        flex-direction: row; /* Forces horizontal layout */
-        gap: 2rem;
-        margin-top: 1rem;
+        flex-direction: row; /* Force side-by-side */
+        gap: 2.5rem;
         justify-content: center;
-        flex-wrap: wrap; /* Allows wrapping on small screens */
+        flex-wrap: wrap; /* Wraps on mobile */
+        width: 100%;
     }
 
     .feature-card {
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border-radius: 20px;
+        border-radius: 24px;
         padding: 40px 30px;
-        width: 300px;
+        width: 320px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         display: flex;
         flex-direction: column;
         align-items: center;
     }
 
     .feature-card:hover {
-        transform: translateY(-10px);
+        transform: translateY(-12px);
         background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(34, 211, 238, 0.3);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        border: 1px solid rgba(34, 211, 238, 0.4);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
     }
 
     .feature-icon {
@@ -142,15 +141,14 @@ st.markdown("""
 
     .feature-title {
         font-weight: 700;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-bottom: 12px;
-        color: white;
     }
 
     .feature-desc {
         opacity: 0.6;
         font-size: 0.95rem;
-        line-height: 1.5;
+        line-height: 1.6;
     }
     </style>
 
