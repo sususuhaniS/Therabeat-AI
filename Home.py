@@ -163,11 +163,6 @@ st.markdown("""
                 <div class="feature-title">Spotify Playlists</div>
                 <div class="feature-desc">Get curated playlists tailored to your emotional state</div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">😊</div>
-                <div class="feature-title">Mood Tracking</div>
-                <div class="feature-desc">Track your emotional journey over time</div>
-            </div>
    </div>
 
 """, unsafe_allow_html=True)
