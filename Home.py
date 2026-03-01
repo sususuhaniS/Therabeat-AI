@@ -95,7 +95,7 @@ st.markdown("""
     .subtitle-desc {
         font-size: 1.25rem;
         max-width: 750px;
-        margin: 0 auto 4rem auto;
+        margin-top: 0 auto 4rem auto;
         opacity: 0.8;
         font-weight: 400;
         line-height: 1.6;
@@ -103,6 +103,7 @@ st.markdown("""
 
       .feature-cards {
         display: flex;
+        gap: 2rem;
         flex-wrap: wrap;
         justify-content: center;
         align-items: stretch;
