@@ -214,7 +214,7 @@ async def main():
         [data-testid="stSidebar"] {
            
             padding: 20px;
-            border-radius: 10px;
+
         }
         [data-testid="stSidebar"] .css-1lrl5i {
             color: white;
