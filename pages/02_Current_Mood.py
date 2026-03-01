@@ -5,25 +5,29 @@ from music import predict_favorite_genre
 from datetime import datetime
 from login import is_authenticated, show_login_page
 
-# Set background color to match home page
 st.markdown("""
 <style>
 .stApp {
-    background:
+    background: 
         radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
         radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* Filled only */
-[data-testid="stSlider"] div[data-baseweb="slider"] > div > div:first-child {
-    background-color: #22D3EE !important;
+/* 1. Target the 'filled' part of the slider track */
+[data-testid="stSlider"] [data-baseweb="slider"] div > div > div > div {
+    background-color: #00FFFF !important; /* Pure Cyan */
 }
 
-/* Change the slider thumb (circle) */
+/* 2. Target the slider thumb (the circle) */
 [data-testid="stSlider"] div[role="slider"] {
-    background-color: #22D3EE;
-    border: 2px solid white;
+    background-color: #00FFFF !important;
+    border: 2px solid white !important;
+}
+
+/* 3. Optional: Change the unselected track color to something darker */
+[data-testid="stSlider"] [data-baseweb="slider"] > div > div {
+    background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 </style>
