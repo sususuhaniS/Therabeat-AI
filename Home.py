@@ -46,23 +46,28 @@ async def home_page():
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
-    
+
+    /* 1. Reset and Background - Using your preferred radial style */
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background:
+            radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%) !important;
     }
-    
+
+    /* 2. Container and Typography */
     .welcome-container {
         font-family: 'Inter', sans-serif;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 80vh;
+        min-height: 80vh;
         text-align: center;
         color: white;
+        padding: 40px 20px;
     }
-    
-    /* Top eyebrow text */
+
     .top-eyebrow {
         font-size: 14px;
         letter-spacing: 8px;
@@ -71,84 +76,84 @@ st.markdown("""
         font-weight: 700;
         margin-bottom: 25px;
     }
-    
-    /* Main hero title */
+
     .main-hero-title {
         font-size: 5.5rem;
         font-weight: 800;
-        line-height: 1;
+        line-height: 1.1;
         margin-bottom: 25px;
         letter-spacing: -2px;
     }
-    
-    /* Gradient AI text */
+
     .gradient-text {
         background: linear-gradient(135deg, #ffffff 30%, #22D3EE 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-left: 10px;
+        display: inline-block;
     }
-    
-    /* Subtitle */
+
     .subtitle-desc {
-        font-size: 1.5rem;
-        max-width: 800px;
-        margin: 0 auto 3rem auto;
-        opacity: 0.9;
+        font-size: 1.25rem;
+        max-width: 750px;
+        margin: 0 auto 4rem auto;
+        opacity: 0.8;
         font-weight: 400;
-        line-height: 1.4;
+        line-height: 1.6;
     }
-    
-    /* Feature cards */
+
+    /* 3. Feature Cards - FORCED ROW LAYOUT */
     .feature-cards {
-        display: flex;
+        display: flex !important;
+        flex-direction: row !important;
         gap: 2rem;
-        margin-top: 3rem;
-        flex-wrap: wrap;
         justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
     }
-    
+
     .feature-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 2rem;
-        width: 280px;
-        min-height: 200px;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 24px;
+        padding: 40px 30px;
+        width: 320px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
-    
+
     .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(34, 211, 238, 0.4);
     }
-    
+
     .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
+        font-size: 3.5rem;
+        margin-bottom: 20px;
     }
-    
+
     .feature-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 12px;
     }
-    
+
     .feature-desc {
-        opacity: 0.85;
+        opacity: 0.7;
         font-size: 0.95rem;
+        line-height: 1.5;
     }
     </style>
-    
+
     <div class="welcome-container">
         <div class="top-eyebrow">Reimagining Music Therapy</div>
-    
         <div class="main-hero-title">
             TheraBeat<span class="gradient-text">AI</span>
         </div>
-    
         <div class="subtitle-desc">
             Your personalized journey to mental wellness through the power of generative audio landscapes.
         </div>
@@ -157,17 +162,12 @@ st.markdown("""
             <div class="feature-card">
                 <div class="feature-icon">🎵</div>
                 <div class="feature-title">AI Music</div>
-                <div class="feature-desc">
-                    Generate personalized music tracks based on your unique mood and emotional state.
-                </div>
+                <div class="feature-desc">Generate personalized music tracks based on your unique mood and emotional state.</div>
             </div>
-    
             <div class="feature-card">
                 <div class="feature-icon">🎧</div>
                 <div class="feature-title">Spotify Playlists</div>
-                <div class="feature-desc">
-                    Get curated Spotify collections tailored to help you navigate your emotional journey.
-                </div>
+                <div class="feature-desc">Get curated Spotify collections tailored to help you navigate your emotional journey.</div>
             </div>
         </div>
     </div>
