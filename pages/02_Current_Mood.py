@@ -16,7 +16,7 @@ st.markdown("""
 }
 
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div:last-child {
-    background-color: #2a2a2a !important;
+    background-color: #22D3EE;
 }
 
 
