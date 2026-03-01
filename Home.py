@@ -95,7 +95,7 @@ st.markdown("""
     .subtitle-desc {
         font-size: 1.25rem;
         max-width: 750px;
-        margin-top: 0 auto 4rem auto;
+        margin-top: 4rem ;
         opacity: 0.8;
         font-weight: 400;
         line-height: 1.6;
