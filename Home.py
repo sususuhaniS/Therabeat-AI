@@ -111,11 +111,64 @@ async def home_page():
         opacity: 0.8;
         font-size: 0.9rem;
     }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+
+    .welcome-container {
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+        text-align: center;
+        color: white;
+    }
+
+    /* Top line: REIMAGINING MUSIC THERAPY */
+    .top-eyebrow {
+        font-size: 14px;
+        letter-spacing: 8px; /* High spacing like the image */
+        text-transform: uppercase;
+        color: #22D3EE;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* Main Title: TheraBeat AI */
+    .main-hero-title {
+        font-size: 5.5rem; /* Large punchy size */
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 25px;
+        letter-spacing: -2px;
+    }
+
+    /* The "AI" part with the gradient */
+    .gradient-text {
+        background: linear-gradient(135deg, #ffffff 30%, #22D3EE 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-left: 10px;
+    }
+
+    /* Subtitle text */
+    .subtitle-desc {
+        font-size: 1.5rem;
+        max-width: 800px;
+        margin: 0 auto 3rem auto;
+        opacity: 0.9;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+
+
+    
     </style>
     """, unsafe_allow_html=True)
     
     # Welcome content
     st.markdown("""
+    
     <div class="welcome-container">
         <div class="main-title">Reimagining Music Therapy</div>
         <div class="subtitle">TheraBeat AI</div>
