@@ -35,6 +35,23 @@ st.markdown("""
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div {
     background-color: rgba(255, 255, 255, 0.1) !important;
 }
+/* 5. BUTTON: Change 'Update Mood' to Cyan */
+div.stButton > button {
+    background-color: #22D3EE !important;
+    color: #000000 !important; /* Dark text for readability */
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: bold !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* 6. BUTTON: Hover Effect */
+div.stButton > button:hover {
+    background-color: #ffffff !important; /* Turns white on hover */
+    color: #22D3EE !important;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
