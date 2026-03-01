@@ -15,8 +15,7 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* Change filled portion of slider track */
-[data-testid="stSlider"] div[data-baseweb="slider"] > div > div > div {
+[data-testid="stSlider"] div[data-baseweb="slider"] > div > div:first-child {
     background-color: #22D3EE !important;
 }
 
