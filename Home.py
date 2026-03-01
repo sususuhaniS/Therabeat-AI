@@ -125,7 +125,7 @@ async def home_page():
     }
 
     /* Top line: REIMAGINING MUSIC THERAPY */
-    .top-eyebrow {
+    .cc {
         font-size: 14px;
         letter-spacing: 8px; /* High spacing like the image */
         text-transform: uppercase;
@@ -168,26 +168,34 @@ async def home_page():
     
     # Welcome content
     st.markdown("""
-    
     <div class="welcome-container">
-        <div class="main-title">Reimagining Music Therapy</div>
-        <div class="subtitle">TheraBeat AI</div>
-        <div class="subtitle">Your personalized journey to mental wellness through the power of generative audio landscapes.</div>
-        <div class="feature-cards">
+        <div class="top-eyebrow">Reimagining Music Therapy</div>
+        
+        <div class="main-hero-title">
+            TheraBeat<span class="gradient-text">AI</span>
+        </div>
+        
+        <div class="subtitle-desc">
+            Your personalized journey to mental wellness through the power of generative audio landscapes.
+        </div>
+        
+        <div class="feature-cards" style="display: flex; flex-direction: row; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; margin-top: 1rem;">
+            
             <div class="feature-card">
                 <div class="feature-icon">🎵</div>
                 <div class="feature-title">AI Music</div>
                 <div class="feature-desc">Generate personalized music based on your mood and preferences</div>
             </div>
+            
             <div class="feature-card">
                 <div class="feature-icon">🎧</div>
                 <div class="feature-title">Spotify Playlists</div>
                 <div class="feature-desc">Get curated playlists tailored to your emotional state</div>
             </div>
+            
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
 async def main():
     # Initialize session state
     if 'user_info' not in st.session_state:
