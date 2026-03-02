@@ -4,7 +4,6 @@ from database import display_stored_user_data
 from login import is_authenticated, show_login_page
 st.markdown("""
 <style>
-/* 1. The Main App Background */
 .stApp {
     background: 
         radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
@@ -12,23 +11,22 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* 2. Force the filled track to Cyan (removes the red) */
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div > div:first-child {
     background-color: #22D3EE !important;
 }
-/* 3. RESET THE UNFILLED TRACK (The part after the knob) */
+
 [data-testid="stSlider"] [data-baseweb="slider"] > div > div {
     background-image: none !important;
 }
 
-/* 3. The Slider Thumb (The Circle) */
+
 [data-testid="stSlider"] div[role="slider"] {
     background-color: #22D3EE !important;
     border: 2px solid white !important;
     box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
 }
 
-/* 4. Fix the labels (the numbers above the thumb) */
+
 [data-testid="stSlider"] div[role="slider"] > div {
     color: white !important; /* Makes the number readable */
     background-color: transparent !important; /* Removes the cyan box behind the number */
@@ -41,7 +39,7 @@ st.markdown("""
 }
 
 
-/* 5. BUTTON: Change 'Update Mood' to Cyan */
+
 div.stButton > button {
     background-color: #22D3EE !important;
     color: #000000 !important; /* Dark text for readability */
@@ -52,15 +50,13 @@ div.stButton > button {
     transition: all 0.2s ease-in-out !important;
 }
 
-/* 6. BUTTON: Hover Effect */
 div.stButton > button:hover {
     background-color: #64E9FA !important;
     color: #000000 !important; /* Dark text for readability */
     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
 }
 
-/* 5. THE BUTTON: Targets st.form_submit_button */
-/* This kills the orange/red and forces Cyan */
+
 div.stFormSubmitButton > button {
     background-color: #22D3EE !important;
     color: #000000 !important; /* Black text for better contrast on Cyan */
@@ -71,7 +67,7 @@ div.stFormSubmitButton > button {
     border-radius: 8px !important;
 }
 
-/* 6. BUTTON HOVER: Light up on mouseover */
+
 div.stFormSubmitButton > button:hover {
     background-color: #64E9FA !important;
     color: #000000 !important; /* Dark text for readability */
