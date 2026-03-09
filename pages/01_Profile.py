@@ -12,28 +12,27 @@ st.markdown("""
 }
 
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div > div:first-child {
-    background-color: #22D3EE !important;
+    background-color: #22D3EE;
 }
 
 [data-testid="stSlider"] [data-baseweb="slider"] > div > div {
-    background-image: none !important;
+    background-image: none;
 }
 
 
 [data-testid="stSlider"] div[role="slider"] {
-    background-color: #22D3EE !important;
-    border: 2px solid white !important;
+    background-color: #22D3EE;
+    border: 2px solid white;
     box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
 }
 
 
 [data-testid="stSlider"] div[role="slider"] > div {
-    color: white !important; /* Makes the number readable */
-    background-color: transparent !important; /* Removes the cyan box behind the number */
+    color: white;
+    background-color: transparent;
     font-weight: bold;
 }
 
-/* 5. The Tick Marks / Unfilled Track */
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div {
     background-color: transparent;
 }
@@ -41,38 +40,38 @@ st.markdown("""
 
 
 div.stButton > button {
-    background-color: #22D3EE !important;
-    color: #000000 !important; /* Dark text for readability */
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
-    transition: all 0.2s ease-in-out !important;
+    background-color: #22D3EE;
+    color: #000000; 
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
 }
 
 div.stButton > button:hover {
-    background-color: #64E9FA !important;
-    color: #000000 !important; /* Dark text for readability */
-    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+    background-color: #64E9FA;
+    color: #000000 !important;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6);
 }
 
 
 div.stFormSubmitButton > button {
-    background-color: #22D3EE !important;
-    color: #000000 !important; /* Black text for better contrast on Cyan */
-    border: none !important;
-    width: 100%; /* Optional: makes button full width of the form */
-    font-weight: bold !important;
-    padding: 0.6rem 2rem !important;
-    border-radius: 8px !important;
+    background-color: #22D3EE;
+    color: #000000; 
+    border: none;
+    width: 100%;
+    font-weight: bold;
+    padding: 0.6rem 2rem;
+    border-radius: 8px;
 }
 
 
 div.stFormSubmitButton > button:hover {
-    background-color: #64E9FA !important;
-    color: #000000 !important; /* Dark text for readability */
-    border: 1px solid #64E9FA !important;
-    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+    background-color: #64E9FA;
+    color: #000000 !important;
+    border: 1px solid #64E9FA;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6);
 }
 
 </style>
