@@ -9,7 +9,7 @@ import nest_asyncio
 from datetime import datetime
 import pickle
 from pathlib import Path
-# Apply nest_asyncio to allow nested event loops
+
 nest_asyncio.apply()
 
 def load_model():
@@ -43,7 +43,6 @@ def initialize_spotify():
 
 async def home_page():
     """Display home page with welcome message."""
-    # Indent this entire block so it belongs to the function
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
@@ -160,7 +159,6 @@ async def home_page():
     """, unsafe_allow_html=True)
     
 async def main():
-    # Initialize session state
     if 'user_info' not in st.session_state:
         st.session_state.user_info = None
     if 'authenticated' not in st.session_state:
@@ -176,14 +174,12 @@ async def main():
 
    
     try:
-        # Set page config
         st.set_page_config(
             page_title="TheraBeat AI - Home",
             page_icon="🎵",
             layout="wide"
         )
         
-        # Show login page if not authenticated
         if not is_authenticated():
             show_login_page()
             return
