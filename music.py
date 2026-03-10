@@ -141,7 +141,7 @@ async def generate_genre_track(genre_name, duration_seconds=10):
     filename = f"{genre_name.replace(' ', '_')}_track.wav"
 
     try:
-        # We save the stream to a local file so Streamlit can play it
+        # save the stream to a local file so Streamlit can play it
         with wave.open(filename, 'wb') as wf:
             wf.setnchannels(2)      # Stereo
             wf.setsampwidth(2)      # 16-bit
