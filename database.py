@@ -149,22 +149,22 @@ def show_user_profile_form():
         foreign_languages = st.selectbox("Do you understand foreign languages?", ['No', 'Yes'])
         
         # Mood Initialization
-        st.markdown("### Initial Mood Settings")
-        st.info("Please set your current mood. You can update this later at any time.")
+       # st.markdown("### Initial Mood Settings")
+        #st.info("Please set your current mood. You can update this later at any time.")
         
-        col1, col2 = st.columns(2)
-        with col1:
-            openness = st.selectbox("Open to new experiences?", ['Yes', 'No'], 
-                                 help="Are you open to trying new types of music?")
-            anxiety = st.slider("Anxiety (1-10)", 1, 10, 5,
-                             help="Your current anxiety level (1=low, 10=high)")
-            depression = st.slider("Mood (1-10)", 1, 10, 5,
-                                help="Your current mood (1=low, 10=high)")
-        with col2:
-            insomnia = st.slider("Sleep Quality (1-10)", 1, 10, 5,
-                              help="Your recent sleep quality (1=poor, 10=excellent)")
-            ocd = st.slider("Focus Level (1-10)", 1, 10, 5,
-                          help="Your current ability to focus (1=poor, 10=excellent)")
+       # col1, col2 = st.columns(2)
+       # with col1:
+           # openness = st.selectbox("Open to new experiences?", ['Yes', 'No'], 
+             #                    help="Are you open to trying new types of music?")
+          #  anxiety = st.slider("Anxiety (1-10)", 1, 10, 5,
+           #                  help="Your current anxiety level (1=low, 10=high)")
+          #  depression = st.slider("Mood (1-10)", 1, 10, 5,
+          #                      help="Your current mood (1=low, 10=high)")
+      #  with col2:
+       #     insomnia = st.slider("Sleep Quality (1-10)", 1, 10, 5,
+              #                help="Your recent sleep quality (1=poor, 10=excellent)")
+       #     ocd = st.slider("Focus Level (1-10)", 1, 10, 5,
+            #              help="Your current ability to focus (1=poor, 10=excellent)")
 
         music_effect = st.selectbox("Does music affect your mood?", music_effect_options)
         bpm = st.slider("Preferred BPM (Beats Per Minute)", 60, 200, 120)
