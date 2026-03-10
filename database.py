@@ -208,13 +208,17 @@ def create_initial_user_profile(user_email):
     """Show the profile creation form and save the data."""
     st.info("Welcome! Please complete your profile to get started.")
     user_data = show_user_profile_form()
+
     if user_data:
         if save_user_profile(user_email, user_data):
             st.success("Profile saved successfully!")
-            st.session_state["profile_completed"] = True
-            st.rerun() 
+
+            st.session_state["user_profile"] = user_data
+            st.rerun()
+
         else:
             st.error("Failed to save profile. Please try again.")
+
     return None
 
 def display_stored_user_data(user_profile):
