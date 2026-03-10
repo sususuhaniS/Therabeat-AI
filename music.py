@@ -11,24 +11,19 @@ import nest_asyncio
 from google import genai
 from google.genai import types
 
-# Allow asyncio to run nested within Streamlit
 nest_asyncio.apply()
 
-# Load Lyria API key from Streamlit secrets
 API_KEY = st.secrets.get("LYRIA_API_KEY")
 MODEL_ID = "models/lyria-v1"
 
 if not API_KEY:
     st.error("❌ Lyria API key is not configured. Please check your secrets.toml file.")
 
-
-
 client = genai.Client(
     api_key=API_KEY,
-    http_options={'api_version': 'v1alpha'} # REQUIRED for Lyria
+    http_options={'api_version': 'v1alpha'}
 )
 
-# Genre mapping and prompts
 GENRE_MAPPING = [
     "Rock", "Pop", "Metal", "EDM", "Hip hop", "Classical", "Video game music", "R&B"
 ]
@@ -45,29 +40,22 @@ GENRE_PROMPTS = {
 }
 
 def predict_favorite_genre(user_profile, model):
-    """Predict the favorite music genre based on user profile using the provided model."""
     try:
-        # Helper function to safely get and convert values to float32
         def get_feature(key, default=0):
             value = user_profile.get(key, default)
            
-            # Handle None values
             if value is None:
                 return float(default)
                
-            # Convert to string for consistent handling
             if not isinstance(value, str):
                 value = str(value)
                
-            # Convert string numbers to float
             if value.replace('.', '').isdigit():
                 return float(value)
                
-            # Handle yes/no fields
             if value.lower() in ['yes', 'no']:
                 return 1.0 if value.lower() == 'yes' else 0.0
                
-            # Handle frequency strings (Never, Rarely, Sometimes, Very frequently)
             freq_map = {
                 'never': 0.0,
                 'rarely': 1.0,
@@ -77,13 +65,11 @@ def predict_favorite_genre(user_profile, model):
             if value.lower() in freq_map:
                 return freq_map[value.lower()]
                
-            # Default case - try to convert to float, fallback to default
             try:
                 return float(value)
             except (ValueError, TypeError):
                 return float(default)
        
-        # Prepare the input features for the model
         input_features = [
             float(get_feature('Age', 25)),
             float(get_feature('Hours per day', 2)),
@@ -93,7 +79,6 @@ def predict_favorite_genre(user_profile, model):
             float(1 if str(user_profile.get('Exploratory', 'No')).lower() == 'yes' else 0),
             float(1 if str(user_profile.get('Foreign languages', 'No')).lower() == 'yes' else 0),
             float(get_feature('BPM', 120)),
-            # Handle both Frequency_Genre and Frequency [Genre] formats
             float(get_feature('Frequency_Classical', get_feature('Frequency [Classical]', 2))),
             float(get_feature('Frequency_EDM', get_feature('Frequency [EDM]', 2))),
             float(get_feature('Frequency_Folk', get_feature('Frequency [Folk]', 2))),
@@ -101,148 +86,4 @@ def predict_favorite_genre(user_profile, model):
             float(get_feature('Frequency_HipHop', get_feature('Frequency [Hip hop]', 2))),
             float(get_feature('Frequency_Jazz', get_feature('Frequency [Jazz]', 2))),
             float(get_feature('Frequency_KPop', get_feature('Frequency [K pop]', 2))),
-            float(get_feature('Frequency_Metal', get_feature('Frequency [Metal]', 2))),
-            float(get_feature('Frequency_Pop', get_feature('Frequency [Pop]', 2))),
-            float(get_feature('Frequency_RnB', get_feature('Frequency [R&B]', 2))),
-            float(get_feature('Frequency_Rock', get_feature('Frequency [Rock]', 2))),
-            float(get_feature('Frequency_VGM', get_feature('Frequency [Video game music]', 2))),
-            float(get_feature('Anxiety', 5)),
-            float(get_feature('Depression', 5)),
-            float(get_feature('Insomnia', 5)),
-            float(get_feature('OCD', 5)),
-            float(1 if str(user_profile.get('MusicEffects', 'No')).lower() == 'improve' else 0)
-        ]
-       
-        # Ensure all features are float32 and in a 2D numpy array
-        import numpy as np
-        input_array = np.array([input_features], dtype=np.float32)
-       
-        # Get prediction from the model
-        prediction = model.predict(input_array)
-       
-        # Ensure prediction is an integer index
-        index = int(prediction[0]) if len(prediction) > 0 else 0
-        index = max(0, min(index, len(GENRE_MAPPING) - 1))  # Ensure valid index
-       
-        predicted_genre = GENRE_MAPPING[index]
-       
-        return predicted_genre
-       
-    except Exception:
-        return "Pop"
-
-async def generate_genre_track(genre_name, duration_seconds=10):
-    """ACTUALLY generates audio using Lyria RealTime."""
-    prompt_text = GENRE_PROMPTS.get(genre_name)
-    if not prompt_text:
-        st.error(f"Genre {genre_name} not found.")
-        return None
-
-    filename = f"{genre_name.replace(' ', '_')}_track.wav"
-   
-    try:
-        # We save the stream to a local file so Streamlit can play it
-        with wave.open(filename, 'wb') as wf:
-            wf.setnchannels(2)      # Stereo
-            wf.setsampwidth(2)      # 16-bit
-            wf.setframerate(48000)  # 48kHz
-
-            # Connect to the Lyria WebSocket
-            async with client.aio.live.music.connect(model='models/lyria-realtime-exp') as session:
-                st.write(f"🎵 Connected to Lyria. Composing {genre_name}...")
-               
-                # Set the prompt
-                await session.set_weighted_prompts(
-                    prompts=[types.WeightedPrompt(text=prompt_text, weight=1.0)]
-                )
-
-                # Start playback
-                await session.play()
-
-                chunks_needed = duration_seconds // 2 # ~2 seconds per chunk
-                count = 0
-
-                async for message in session.receive():
-                    if message.server_content.audio_chunks:
-                        # Write raw PCM data to the wav file
-                        wf.writeframes(message.server_content.audio_chunks[0].data)
-                        count += 1
-                   
-                    if count >= chunks_needed:
-                        break
-       
-        return filename
-
-    except Exception as e:
-        st.error(f"❌ Lyria Connection Error: {str(e)}")
-        return None
-
-def get_spotify_playlist(sp_client, genre):
-    try:
-        results = sp_client.search(q=f"{genre} playlist", type="playlist", limit=5)
-
-        if not results or not results.get("playlists"):
-            return None
-
-        playlists = results["playlists"].get("items")
-
-        if not playlists:
-            return None
-
-        return playlists[0]["id"]
-
-    except Exception as e:
-        print(f"Spotify Error: {e}")
-        return None
-
-
-def embed_spotify_playlist(playlist_url):
-    playlist_id = playlist_url.split("/")[-1].split("?")[0]
-
-    embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}?theme=0"
-
-    st.markdown(
-        f"""
-        <style>
-        .spotify-container {{
-            width: 75%;
-            height: 650px;   
-            overflow: hidden;
-            border-radius: 0px;
-            background: black;
-        }}
-
-        .spotify-container iframe {{
-            width: 100%;
-            height: 700px;   
-            border: none;
-            margin-top: -10px;
-        }}
-        </style>
-
-        <div class="spotify-container">
-            <iframe src="{embed_url}"
-            allow="encrypted-media">
-            </iframe>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-async def create_and_compose(genre):
-    """Create and compose a new track of the specified genre using Lyria."""
-    if not API_KEY:
-        st.error("❌ Music generation is not available. Missing Lyria API key.")
-        return None
-
-    try:
-        #with st.spinner('🎵 Composing your personalized music...'):
-        filename = await generate_genre_track(genre, duration_seconds=10)
-        if filename:
-            return filename
-        else:
-            st.error("Failed to generate music.")
-            return None
-    except Exception as e:
-        st.error(f"❌ Error in music generation: {str(e)}")
-        return None
+            float
