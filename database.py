@@ -257,7 +257,7 @@ def display_stored_user_data(user_profile):
                         value = user_profile[key]
                         break
                 st.metric(display_name, value)
-    
+    '''
     st.markdown("### Current Mood")
     with st.form("mood_form"):
         col1, col2 = st.columns(2)
@@ -321,7 +321,7 @@ def display_stored_user_data(user_profile):
                 'OCD': ocd,
                 'LastUpdated': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
-            
+            '''
             # Update local profile
             user_profile.update(mood_update)
             
