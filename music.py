@@ -226,17 +226,24 @@ def embed_spotify_playlist(playlist_url):
     st.markdown(
         f"""
         <style>
-        .spotify-player {{
-            border-radius: 0px !important;
+        .spotify-container {{
+            width: 100%;
+            height: 650px;   
             overflow: hidden;
+            border-radius: 0px;
+            background: black;
+        }}
+
+        .spotify-container iframe {{
+            width: 100%;
+            height: 700px;   
+            border: none;
+            margin-top: -10px;
         }}
         </style>
 
-        <div class="spotify-player">
+        <div class="spotify-container">
             <iframe src="{embed_url}"
-            width="100%"
-            height="380"
-            frameborder="0"
             allow="encrypted-media">
             </iframe>
         </div>
