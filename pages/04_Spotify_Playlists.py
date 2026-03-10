@@ -88,7 +88,7 @@ else:
                 with st.spinner("🎧 Finding your perfect playlist..."):
 
                     try:
-                        playlist_url = asyncio.run(get_spotify_playlist(predicted_genre, st.session_state.sp_client))
+                       playlist_url = get_spotify_playlist(st.session_state.sp_client, predicted_genre)
                         if playlist_url:
 
                             if "playlist_history" not in st.session_state:
