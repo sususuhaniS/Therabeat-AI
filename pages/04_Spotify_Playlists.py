@@ -35,16 +35,16 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 div.stButton > button {
-    background-color: #22D3EE !important;
-    color: #000000 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
+    background-color: #22D3EE;
+    color: #000000;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
 }
 div.stButton > button:hover {
-    background-color: #64E9FA !important;
-    box-shadow: 0 0 15px rgba(34,211,238,0.6) !important;
+    background-color: #64E9FA;
+    box-shadow: 0 0 15px rgba(34,211,238,0.6);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -79,7 +79,6 @@ else:
 
         col1, col2 = st.columns([2,1])
 
-        # LEFT COLUMN
         with col1:
 
             st.write("Get curated Spotify playlists based on your music preferences and current mood.")
@@ -126,8 +125,6 @@ else:
                     except Exception as e:
                         st.error(f"❌ Error getting playlist: {str(e)}")
 
-
-        # RIGHT COLUMN
         with col2:
 
             st.subheader("Playlist History")
