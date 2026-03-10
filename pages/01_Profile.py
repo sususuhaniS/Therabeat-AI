@@ -89,7 +89,7 @@ else:
         display_stored_user_data(user_profile)
         
         # Quick navigation to mood page
-        st.markdown("---")
+        #st.markdown("---")
         st.info("**Want to update your current mood or analyze music preferences?** Navigate to 'Current Mood' page to track your emotional state and get personalized music recommendations.")
 
     # Get user data from session state
