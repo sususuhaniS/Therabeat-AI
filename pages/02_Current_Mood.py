@@ -7,7 +7,6 @@ from login import is_authenticated, show_login_page
 
 st.markdown("""
 <style>
-/* 1. The Main App Background */
 .stApp {
     background: 
         radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
@@ -15,79 +14,68 @@ st.markdown("""
         radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
-/* 2. Force the filled track to Cyan (removes the red) */
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div > div:first-child {
     background-color: #22D3EE !important;
-     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+     box-shadow: 0 0 15px rgba(34, 211, 238, 0.6);
 }
-/* 3. RESET THE UNFILLED TRACK (The part after the knob) */
+
 [data-testid="stSlider"] [data-baseweb="slider"] > div > div {
-    background-image: none !important;
+    background-image: none;
 }
 
-/* 3. The Slider Thumb (The Circle) */
 [data-testid="stSlider"] div[role="slider"] {
-    background-color: #22D3EE !important;
-    border: 2px solid white !important;
+    background-color: #22D3EE;
+    border: 2px solid white;
     box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
-    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6);
 }
 
-/* 4. Fix the labels (the numbers above the thumb) */
 [data-testid="stSlider"] div[role="slider"] > div {
-    color: white !important; /* Makes the number readable */
-    background-color: transparent !important; /* Removes the cyan box behind the number */
+    color: white;
+    background-color: transparent; 
     font-weight: bold;
 }
 
-/* 5. The Tick Marks / Unfilled Track */
 [data-testid="stSlider"] div[data-baseweb="slider"] > div > div {
     background-color: transparent;
 }
 
-
-/* 5. BUTTON: Change 'Update Mood' to Cyan */
 div.stButton > button {
-    background-color: #22D3EE !important;
-    color: #000000 !important; /* Dark text for readability */
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
-    transition: all 0.2s ease-in-out !important;
+    background-color: #22D3EE;
+    color: #000000;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
 }
 
-/* 6. BUTTON: Hover Effect */
 div.stButton > button:hover {
-    background-color: #64E9FA !important;
-    color: #000000 !important; /* Dark text for readability */
-    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+    background-color: #64E9FA;
+    color: #000000; 
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6);
 }
 
-/* 5. THE BUTTON: Targets st.form_submit_button */
-/* This kills the orange/red and forces Cyan */
 div.stFormSubmitButton > button {
-    background-color: #22D3EE !important;
-    color: #000000 !important; /* Black text for better contrast on Cyan */
-    border: none !important;
-    width: 100%; /* Optional: makes button full width of the form */
-    font-weight: bold !important;
-    padding: 0.6rem 2rem !important;
-    border-radius: 8px !important;
+    background-color: #22D3EE;
+    color: #000000;
+    border: none;
+    width: 100%;
+    font-weight: bold;
+    padding: 0.6rem 2rem;
+    border-radius: 8px;
 }
 
-/* 6. BUTTON HOVER: Light up on mouseover */
 div.stFormSubmitButton > button:hover {
-    background-color: #64E9FA !important;
-    color: #000000 !important; /* Dark text for readability */
-    border: 1px solid #64E9FA !important;
-    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+    background-color: #64E9FA;
+    color: #000000;
+    border: 1px solid #64E9FA;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6);
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# Check authentication before showing page
 if not is_authenticated():
     show_login_page()
 else:
@@ -103,7 +91,6 @@ else:
         st.header("Update Your Mental Health Ratings")
         
         with st.form("mood_update_form"):
-            # We use int() to make sure Streamlit gets the right data type
             openness = st.selectbox(
                 "Openness to new experiences",
                 options=[1, 0],
