@@ -4,6 +4,8 @@ import wave
 import streamlit as st
 import random
 import numpy as np
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 from io import BytesIO
 from datetime import datetime, timedelta
 import time
@@ -14,19 +16,29 @@ from google.genai import types
 nest_asyncio.apply()
 
 API_KEY = st.secrets.get("LYRIA_API_KEY")
-MODEL_ID = "models/lyria-v1"
-
-if not API_KEY:
-    st.error("❌ Lyria API key is not configured. Please check your secrets.toml file.")
+SPOTIFY_ID = st.secrets.get("SPOTIFY_CLIENT_ID")
+SPOTIFY_SECRET = st.secrets.get("SPOTIFY_CLIENT_SECRET")
 
 client = genai.Client(
     api_key=API_KEY,
     http_options={'api_version': 'v1alpha'}
 )
 
-GENRE_MAPPING = [
-    "Rock", "Pop", "Metal", "EDM", "Hip hop", "Classical", "Video game music", "R&B"
-]
+@st.cache_resource
+def get_sp_client():
+    if SPOTIFY_ID and SPOTIFY_SECRET:
+        try:
+            return spotipy.Spotify(auth_manager=SpotifyClientCredentials(
+                client_id=SPOTIFY_ID,
+                client_secret=SPOTIFY_SECRET
+            ))
+        except Exception:
+            return None
+    return None
+
+sp_client = get_sp_client()
+
+GENRE_MAPPING = ["Rock", "Pop", "Metal", "EDM", "Hip hop", "Classical", "Video game music", "R&B"]
 
 GENRE_PROMPTS = {
     "Classical": "Compose a serene classical piano piece reminiscent of a peaceful afternoon in a garden.",
@@ -43,28 +55,12 @@ def predict_favorite_genre(user_profile, model):
     try:
         def get_feature(key, default=0):
             value = user_profile.get(key, default)
-           
-            if value is None:
-                return float(default)
-               
-            if not isinstance(value, str):
-                value = str(value)
-               
-            if value.replace('.', '').isdigit():
-                return float(value)
-               
-            if value.lower() in ['yes', 'no']:
-                return 1.0 if value.lower() == 'yes' else 0.0
-               
-            freq_map = {
-                'never': 0.0,
-                'rarely': 1.0,
-                'sometimes': 2.0,
-                'very frequently': 3.0
-            }
-            if value.lower() in freq_map:
-                return freq_map[value.lower()]
-               
+            if value is None: return float(default)
+            if not isinstance(value, str): value = str(value)
+            if value.replace('.', '').isdigit(): return float(value)
+            if value.lower() in ['yes', 'no']: return 1.0 if value.lower() == 'yes' else 0.0
+            freq_map = {'never': 0.0, 'rarely': 1.0, 'sometimes': 2.0, 'very frequently': 3.0}
+            if value.lower() in freq_map: return freq_map[value.lower()]
             try:
                 return float(value)
             except (ValueError, TypeError):
@@ -98,125 +94,54 @@ def predict_favorite_genre(user_profile, model):
             float(1 if str(user_profile.get('MusicEffects', 'No')).lower() == 'improve' else 0)
         ]
        
-        import numpy as np
         input_array = np.array([input_features], dtype=np.float32)
-       
         prediction = model.predict(input_array)
-       
         index = int(prediction[0]) if len(prediction) > 0 else 0
         index = max(0, min(index, len(GENRE_MAPPING) - 1))
-       
-        predicted_genre = GENRE_MAPPING[index]
-       
-        return predicted_genre
-       
+        return GENRE_MAPPING[index]
     except Exception:
         return "Pop"
 
 async def generate_genre_track(genre_name, duration_seconds=10):
     prompt_text = GENRE_PROMPTS.get(genre_name)
-    if not prompt_text:
-        st.error(f"Genre {genre_name} not found.")
-        return None
-
+    if not prompt_text: return None
     filename = f"{genre_name.replace(' ', '_')}_track.wav"
-   
     try:
         with wave.open(filename, 'wb') as wf:
             wf.setnchannels(2)
             wf.setsampwidth(2)
             wf.setframerate(48000)
-
             async with client.aio.live.music.connect(model='models/lyria-realtime-exp') as session:
-                st.write(f"🎵 Connected to Lyria. Composing {genre_name}...")
-               
-                await session.set_weighted_prompts(
-                    prompts=[types.WeightedPrompt(text=prompt_text, weight=1.0)]
-                )
-
+                await session.set_weighted_prompts(prompts=[types.WeightedPrompt(text=prompt_text, weight=1.0)])
                 await session.play()
-
                 chunks_needed = duration_seconds // 2
                 count = 0
-
                 async for message in session.receive():
                     if message.server_content.audio_chunks:
                         wf.writeframes(message.server_content.audio_chunks[0].data)
                         count += 1
-                   
-                    if count >= chunks_needed:
-                        break
-       
+                    if count >= chunks_needed: break
         return filename
-
-    except Exception as e:
-        st.error(f"❌ Lyria Connection Error: {str(e)}")
+    except Exception:
         return None
 
-def get_spotify_playlist(sp_client, genre):
+def get_spotify_playlist(genre):
+    if not sp_client:
+        return "37i9dQZF1DXcBWIGoYBM3M"
     try:
-        results = sp_client.search(q=f"{genre} playlist", type="playlist", limit=5)
+        results = sp_client.search(q=f"genre:{genre}", type="playlist", limit=1)
+        items = results.get("playlists", {}).get("items", [])
+        if items:
+            return items[0]["id"]
+        
+        fallback = sp_client.search(q=genre, type="playlist", limit=1)
+        fallback_items = fallback.get("playlists", {}).get("items", [])
+        return fallback_items[0]["id"] if fallback_items else "37i9dQZF1DXcBWIGoYBM3M"
+    except Exception:
+        return "37i9dQZF1DXcBWIGoYBM3M"
 
-        if not results or not results.get("playlists"):
-            return None
-
-        playlists = results["playlists"].get("items")
-
-        if not playlists:
-            return None
-
-        return playlists[0]["id"]
-
-    except Exception as e:
-        print(f"Spotify Error: {e}")
-        return None
-
-
-def embed_spotify_playlist(playlist_url):
-    playlist_id = playlist_url.split("/")[-1].split("?")[0]
-
-    embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}?theme=0"
-
+def embed_spotify_playlist(playlist_id):
+    embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}"
     st.markdown(
         f"""
-        <style>
-        .spotify-container {{
-            width: 75%;
-            height: 650px;   
-            overflow: hidden;
-            border-radius: 0px;
-            background: black;
-        }}
-
-        .spotify-container iframe {{
-            width: 100%;
-            height: 700px;   
-            border: none;
-            margin-top: -10px;
-        }}
-        </style>
-
-        <div class="spotify-container">
-            <iframe src="{embed_url}"
-            allow="encrypted-media">
-            </iframe>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-async def create_and_compose(genre):
-    if not API_KEY:
-        st.error("❌ Music generation is not available. Missing Lyria API key.")
-        return None
-
-    try:
-        filename = await generate_genre_track(genre, duration_seconds=10)
-        if filename:
-            return filename
-        else:
-            st.error("Failed to generate music.")
-            return None
-    except Exception as e:
-        st.error(f"❌ Error in music generation: {str(e)}")
-        return None
+        <iframe src="{embed_url}" width="100%" height="380"
