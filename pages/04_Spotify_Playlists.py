@@ -82,7 +82,7 @@ else:
             
             if st.button("🎧 Get Spotify Playlist", key="get_spotify_playlist", type="primary"):
                 with st.spinner('🎧 Finding your perfect playlist...'):
-                   try:
+try:
     playlist_url = asyncio.run(get_spotify_playlist(predicted_genre, st.session_state.sp_client))
 
     if playlist_url:
