@@ -1,9 +1,30 @@
 import streamlit as st
 import asyncio
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+
 from music import predict_favorite_genre, get_spotify_playlist, embed_spotify_playlist
 from datetime import datetime
 from login import is_authenticated, show_login_page
 
+
+if "sp_client" not in st.session_state:
+    try:
+        st.session_state.sp_client = spotipy.Spotify(
+            auth_manager=SpotifyClientCredentials(
+                client_id=st.secrets["SPOTIFY_CLIENT_ID"],
+                client_secret=st.secrets["SPOTIFY_CLIENT_SECRET"]
+            )
+        )
+    except Exception as e:
+        st.session_state.sp_client = None
+        st.error(f"Spotify initialization failed: {e}")
+
+
+if not is_authenticated():
+    show_login_page()
+    st.stop()
+    
 # Background styling
 st.markdown("""
 <style>
