@@ -177,46 +177,24 @@ async def generate_genre_track(genre_name, duration_seconds=10):
         st.error(f"❌ Lyria Connection Error: {str(e)}")
         return None
 
-async def get_spotify_playlist(genre, sp_client=None):
+def get_spotify_playlist(sp_client, genre):
     try:
-        if sp_client is None:
-            if not st.secrets.get("SPOTIFY_CLIENT_ID"):
-                st.error("❌ Spotify credentials missing.")
-                return None
+        results = sp_client.search(q=f"{genre} playlist", type="playlist", limit=5)
 
-            import spotipy
-            from spotipy.oauth2 import SpotifyClientCredentials
-
-            sp_client = spotipy.Spotify(
-                auth_manager=SpotifyClientCredentials(
-                    client_id=st.secrets["SPOTIFY_CLIENT_ID"],
-                    client_secret=st.secrets["SPOTIFY_CLIENT_SECRET"]
-                )
-            )
-
-        results = sp_client.search(q=genre, type='playlist', limit=5)
-
-        # SAFE CHECKS
-        if not results:
+        if not results or not results.get("playlists"):
             return None
 
-        playlists = results.get("playlists")
+        playlists = results["playlists"].get("items")
 
         if not playlists:
             return None
 
-        items = playlists.get("items")
-
-        if not items:
-            return None
-
-        playlist = random.choice(items)
-
-        return playlist["external_urls"]["spotify"]
+        return playlists[0]["id"]
 
     except Exception as e:
-        st.error(f"Spotify Error: {e}")
+        print(f"Spotify Error: {e}")
         return None
+
 
 def embed_spotify_playlist(playlist_url):
     playlist_id = playlist_url.split("/")[-1].split("?")[0]
