@@ -206,7 +206,25 @@ async def get_spotify_playlist(genre, sp_client=None):
     except Exception as e:
         st.error(f"Spotify Error: {e}")
         return None
-        
+
+def embed_spotify_playlist(playlist_url):
+    playlist_id = playlist_url.split("/")[-1].split("?")[0]
+
+    embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}"
+
+    st.markdown(
+        f"""
+        <iframe src="{embed_url}"
+        width="100%"
+        height="380"
+        frameborder="0"
+        allowtransparency="true"
+        allow="encrypted-media">
+        </iframe>
+        """,
+        unsafe_allow_html=True
+    )
+
 async def create_and_compose(genre):
     """Create and compose a new track of the specified genre using Lyria."""
     if not API_KEY:
