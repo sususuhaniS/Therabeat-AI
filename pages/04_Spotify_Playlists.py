@@ -13,9 +13,8 @@ if "sp_client" not in st.session_state:
                 client_secret=st.secrets["SPOTIFY_CLIENT_SECRET"]
             )
         )
-    except Exception as e:
+    except:
         st.session_state.sp_client = None
-        st.error(f"Spotify initialization failed: {e}")
 
 if not is_authenticated():
     show_login_page()
@@ -51,60 +50,73 @@ try:
         st.session_state.user_profile,
         st.session_state.model
     )
-    st.info(f"Your predicted favorite genre: **{predicted_genre}**")
-except Exception as e:
-    predicted_genre = "Pop"
-    st.warning(f"Could not predict genre: {e}. Using default: {predicted_genre}")
+except:
+    predicted_genre = "pop"
+
+st.info(f"Your predicted favorite genre: **{predicted_genre}**")
 
 st.header("Get Personalized Playlists")
 
 if not st.session_state.sp_client:
-    st.error("❌ Spotify is not available. Please check your credentials.")
-else:
-    col1, col2 = st.columns([2,1])
+    st.error("Spotify client failed to initialize.")
+    st.stop()
 
-    with col1:
-        st.write("Get curated Spotify playlists based on your music preferences and current mood.")
+col1, col2 = st.columns([2,1])
 
-        if st.button("🎧 Get Spotify Playlist", key="get_spotify_playlist", type="primary"):
-            with st.spinner("🎧 Finding your perfect playlist..."):
-                try:
-                    playlist_url = get_spotify_playlist(st.session_state.sp_client, predicted_genre)
-                    if playlist_url:
-                        if "playlist_history" not in st.session_state:
-                            st.session_state.playlist_history = []
+with col1:
 
-                        st.session_state.playlist_history.append(
-                            (
-                                predicted_genre,
-                                playlist_url,
-                                datetime.now().strftime("%Y-%m-%d %H:%M")
-                            )
-                        )
+    st.write("Get curated Spotify playlists based on your music preferences and current mood.")
 
-                        st.success("✅ Playlist found!")
-                        st.subheader(f"🎧 Recommended {predicted_genre} Playlist")
-                        embed_spotify_playlist(playlist_url)
+    if st.button("🎧 Get Spotify Playlist"):
 
-                        st.markdown(
-                            f'<a href="{playlist_url}" target="_blank">🎵 Open Playlist in Spotify</a>',
-                            unsafe_allow_html=True
-                        )
-                    else:
-                        st.error("❌ No playlist found. Try a different genre.")
-                except Exception as e:
-                    st.error(f"❌ Error getting playlist: {str(e)}")
+        with st.spinner("Finding playlist..."):
 
-    with col2:
-        st.subheader("Playlist History")
+            playlist_url = None
 
-        if "playlist_history" not in st.session_state:
-            st.session_state.playlist_history = []
+            try:
+                playlist_url = get_spotify_playlist(
+                    st.session_state.sp_client,
+                    predicted_genre
+                )
+            except:
+                playlist_url = None
 
-        if st.session_state.playlist_history:
-            for i, (genre, url, timestamp) in enumerate(
-                st.session_state.playlist_history[-5:], 1
-            ):
-                st.write(f"{i}. [{genre}]({url}) - {timestamp}")
-        else:
-            st.write("No playlists generated yet.")
+            if playlist_url:
+
+                if "playlist_history" not in st.session_state:
+                    st.session_state.playlist_history = []
+
+                st.session_state.playlist_history.append(
+                    (
+                        predicted_genre,
+                        playlist_url,
+                        datetime.now().strftime("%Y-%m-%d %H:%M")
+                    )
+                )
+
+                st.success("Playlist found!")
+
+                st.subheader(f"{predicted_genre.title()} Playlist")
+
+                embed_spotify_playlist(playlist_url)
+
+                st.markdown(
+                    f'<a href="{playlist_url}" target="_blank">Open in Spotify</a>',
+                    unsafe_allow_html=True
+                )
+
+            else:
+                st.error("No playlist found.")
+
+with col2:
+
+    st.subheader("Playlist History")
+
+    if "playlist_history" not in st.session_state:
+        st.session_state.playlist_history = []
+
+    if len(st.session_state.playlist_history) == 0:
+        st.write("No playlists generated yet.")
+    else:
+        for i, (genre, url, timestamp) in enumerate(st.session_state.playlist_history[-5:], 1):
+            st.write(f"{i}. [{genre}]({url}) - {timestamp}")
