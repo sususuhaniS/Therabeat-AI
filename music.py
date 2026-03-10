@@ -235,7 +235,7 @@ def embed_spotify_playlist(playlist_url):
         }}
 
         .spotify-container iframe {{
-            width: 50%;
+            width: 100%;
             height: 700px;   
             border: none;
             margin-top: -10px;
