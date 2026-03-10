@@ -221,8 +221,7 @@ async def main():
         st.session_state.model = model
         st.session_state.sp_client = sp_client
         st.session_state.user = user
-        
-        # Add logout button in sidebar with gradient background
+  
         st.sidebar.markdown("""
         <style>
         [data-testid="stSidebar"] {
