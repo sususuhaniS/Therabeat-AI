@@ -227,7 +227,7 @@ def embed_spotify_playlist(playlist_url):
         f"""
         <style>
         .spotify-container {{
-            width: 50%;
+            width: 75%;
             height: 650px;   
             overflow: hidden;
             border-radius: 0px;
