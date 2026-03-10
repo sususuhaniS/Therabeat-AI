@@ -82,25 +82,37 @@ else:
             
             if st.button("🎧 Get Spotify Playlist", key="get_spotify_playlist", type="primary"):
                 with st.spinner('🎧 Finding your perfect playlist...'):
-                    try:
-                        playlist_url = asyncio.run(get_spotify_playlist(predicted_genre, st.session_state.sp_client))
-                        
-                        if playlist_url:
-                            # Store in history
-                            if 'playlist_history' not in st.session_state:
-                                st.session_state.playlist_history = []
-                            
-                            st.session_state.playlist_history.append((predicted_genre, playlist_url, datetime.now().strftime("%Y-%m-%d %H:%M")))
-                            
-                            st.success("✅ Playlist found! Click below to open.")
-                            st.markdown(f"### 🎧 Your {predicted_genre} Playlist")
-                            #st.write(f"Debug: Playlist URL = {playlist_url}")  # Debug line
-                            st.markdown(f'<a href="{playlist_url}" target="_blank">🎵 Open Playlist in Spotify</a>', unsafe_allow_html=True)
-                        else:
-                            st.error("❌ No playlist found. Try a different genre.")
-                    except Exception as e:
-                        st.error(f"❌ Error getting playlist: {str(e)}")
-        
+                   try:
+    playlist_url = asyncio.run(get_spotify_playlist(predicted_genre, st.session_state.sp_client))
+
+    if playlist_url:
+
+        # Store playlist history
+        if 'playlist_history' not in st.session_state:
+            st.session_state.playlist_history = []
+
+        st.session_state.playlist_history.append(
+            (predicted_genre, playlist_url, datetime.now().strftime("%Y-%m-%d %H:%M"))
+        )
+
+        st.success("✅ Playlist found!")
+
+        st.subheader(f"🎧 Recommended {predicted_genre} Playlist")
+
+        # Embedded Spotify player
+        embed_spotify_playlist(playlist_url)
+
+        # Optional open link
+        st.markdown(
+            f'<a href="{playlist_url}" target="_blank">🎵 Open Playlist in Spotify</a>',
+            unsafe_allow_html=True
+        )
+
+    else:
+        st.error("❌ No playlist found. Try a different genre.")
+
+except Exception as e:
+    st.error(f"❌ Error getting playlist: {str(e)}")
         with col2:
             st.subheader("Playlist History")
             if 'playlist_history' not in st.session_state:
