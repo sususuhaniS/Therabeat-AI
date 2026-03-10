@@ -221,17 +221,25 @@ async def get_spotify_playlist(genre, sp_client=None):
 def embed_spotify_playlist(playlist_url):
     playlist_id = playlist_url.split("/")[-1].split("?")[0]
 
-    embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}"
+    embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}?theme=0"
 
     st.markdown(
         f"""
-        <iframe src="{embed_url}"
-        width="100%"
-        height="380"
-        frameborder="0"
-        allowtransparency="true"
-        allow="encrypted-media">
-        </iframe>
+        <style>
+        .spotify-player {{
+            border-radius: 0px !important;
+            overflow: hidden;
+        }}
+        </style>
+
+        <div class="spotify-player">
+            <iframe src="{embed_url}"
+            width="100%"
+            height="380"
+            frameborder="0"
+            allow="encrypted-media">
+            </iframe>
+        </div>
         """,
         unsafe_allow_html=True
     )
