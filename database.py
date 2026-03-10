@@ -211,7 +211,8 @@ def create_initial_user_profile(user_email):
     if user_data:
         if save_user_profile(user_email, user_data):
             st.success("Profile saved successfully!")
-            return user_data
+            st.session_state["profile_completed"] = True
+            st.rerun() 
         else:
             st.error("Failed to save profile. Please try again.")
     return None
