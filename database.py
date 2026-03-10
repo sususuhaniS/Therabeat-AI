@@ -158,12 +158,12 @@ def show_user_profile_form():
                                  help="Are you open to trying new types of music?")
             anxiety = st.slider("Anxiety (1-10)", 1, 10, 5,
                              help="Your current anxiety level (1=low, 10=high)")
-            depression = st.slider("Mood (1-10)", 1, 10, 5,
+            depression = st.slider("Depression (1-10)", 1, 10, 5,
                                 help="Your current mood (1=low, 10=high)")
         with col2:
-            insomnia = st.slider("Sleep Quality (1-10)", 1, 10, 5,
+            insomnia = st.slider("Insomnia (1-10)", 1, 10, 5,
                               help="Your recent sleep quality (1=poor, 10=excellent)")
-            ocd = st.slider("Focus Level (1-10)", 1, 10, 5,
+            ocd = st.slider("OCD (1-10)", 1, 10, 5,
                           help="Your current ability to focus (1=poor, 10=excellent)")
 
         music_effect = st.selectbox("Does music affect your mood?", music_effect_options)
