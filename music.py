@@ -86,4 +86,137 @@ def predict_favorite_genre(user_profile, model):
             float(get_feature('Frequency_HipHop', get_feature('Frequency [Hip hop]', 2))),
             float(get_feature('Frequency_Jazz', get_feature('Frequency [Jazz]', 2))),
             float(get_feature('Frequency_KPop', get_feature('Frequency [K pop]', 2))),
-            float
+            float(get_feature('Frequency_Metal', get_feature('Frequency [Metal]', 2))),
+            float(get_feature('Frequency_Pop', get_feature('Frequency [Pop]', 2))),
+            float(get_feature('Frequency_RnB', get_feature('Frequency [R&B]', 2))),
+            float(get_feature('Frequency_Rock', get_feature('Frequency [Rock]', 2))),
+            float(get_feature('Frequency_VGM', get_feature('Frequency [Video game music]', 2))),
+            float(get_feature('Anxiety', 5)),
+            float(get_feature('Depression', 5)),
+            float(get_feature('Insomnia', 5)),
+            float(get_feature('OCD', 5)),
+            float(1 if str(user_profile.get('MusicEffects', 'No')).lower() == 'improve' else 0)
+        ]
+       
+        import numpy as np
+        input_array = np.array([input_features], dtype=np.float32)
+       
+        prediction = model.predict(input_array)
+       
+        index = int(prediction[0]) if len(prediction) > 0 else 0
+        index = max(0, min(index, len(GENRE_MAPPING) - 1))
+       
+        predicted_genre = GENRE_MAPPING[index]
+       
+        return predicted_genre
+       
+    except Exception:
+        return "Pop"
+
+async def generate_genre_track(genre_name, duration_seconds=10):
+    prompt_text = GENRE_PROMPTS.get(genre_name)
+    if not prompt_text:
+        st.error(f"Genre {genre_name} not found.")
+        return None
+
+    filename = f"{genre_name.replace(' ', '_')}_track.wav"
+   
+    try:
+        with wave.open(filename, 'wb') as wf:
+            wf.setnchannels(2)
+            wf.setsampwidth(2)
+            wf.setframerate(48000)
+
+            async with client.aio.live.music.connect(model='models/lyria-realtime-exp') as session:
+                st.write(f"🎵 Connected to Lyria. Composing {genre_name}...")
+               
+                await session.set_weighted_prompts(
+                    prompts=[types.WeightedPrompt(text=prompt_text, weight=1.0)]
+                )
+
+                await session.play()
+
+                chunks_needed = duration_seconds // 2
+                count = 0
+
+                async for message in session.receive():
+                    if message.server_content.audio_chunks:
+                        wf.writeframes(message.server_content.audio_chunks[0].data)
+                        count += 1
+                   
+                    if count >= chunks_needed:
+                        break
+       
+        return filename
+
+    except Exception as e:
+        st.error(f"❌ Lyria Connection Error: {str(e)}")
+        return None
+
+def get_spotify_playlist(sp_client, genre):
+    try:
+        results = sp_client.search(q=f"{genre} playlist", type="playlist", limit=5)
+
+        if not results or not results.get("playlists"):
+            return None
+
+        playlists = results["playlists"].get("items")
+
+        if not playlists:
+            return None
+
+        return playlists[0]["id"]
+
+    except Exception as e:
+        print(f"Spotify Error: {e}")
+        return None
+
+
+def embed_spotify_playlist(playlist_url):
+    playlist_id = playlist_url.split("/")[-1].split("?")[0]
+
+    embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}?theme=0"
+
+    st.markdown(
+        f"""
+        <style>
+        .spotify-container {{
+            width: 75%;
+            height: 650px;   
+            overflow: hidden;
+            border-radius: 0px;
+            background: black;
+        }}
+
+        .spotify-container iframe {{
+            width: 100%;
+            height: 700px;   
+            border: none;
+            margin-top: -10px;
+        }}
+        </style>
+
+        <div class="spotify-container">
+            <iframe src="{embed_url}"
+            allow="encrypted-media">
+            </iframe>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+async def create_and_compose(genre):
+    if not API_KEY:
+        st.error("❌ Music generation is not available. Missing Lyria API key.")
+        return None
+
+    try:
+        filename = await generate_genre_track(genre, duration_seconds=10)
+        if filename:
+            return filename
+        else:
+            st.error("Failed to generate music.")
+            return None
+    except Exception as e:
+        st.error(f"❌ Error in music generation: {str(e)}")
+        return None
