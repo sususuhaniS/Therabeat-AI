@@ -144,4 +144,17 @@ def embed_spotify_playlist(playlist_id):
     embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}"
     st.markdown(
         f"""
-        <iframe src="{embed_url}" width="100%" height="380"
+        <iframe src="{embed_url}" width="100%" height="380" frameBorder="0" 
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+        loading="lazy"></iframe>
+        """,
+        unsafe_allow_html=True
+    )
+
+async def create_and_compose(genre):
+    if not API_KEY: return None
+    try:
+        filename = await generate_genre_track(genre, duration_seconds=10)
+        return filename
+    except Exception:
+        return None
