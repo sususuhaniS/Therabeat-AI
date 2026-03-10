@@ -178,35 +178,35 @@ async def generate_genre_track(genre_name, duration_seconds=10):
         return None
 
 async def get_spotify_playlist(genre, sp_client=None):
-    """Fetch a random Spotify playlist for the given genre.
-   
-    Args:
-        genre (str): The music genre to search for
-        sp_client: Optional Spotify client instance. If not provided, will try to initialize one.
-    """
     try:
         if sp_client is None:
             if not hasattr(st, 'secrets') or not st.secrets.get("SPOTIFY_CLIENT_ID"):
                 st.error("❌ Spotify API credentials not configured.")
                 return None
+
             import spotipy
             from spotipy.oauth2 import SpotifyClientCredentials
-            sp_client = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
-                client_id=st.secrets["SPOTIFY_CLIENT_ID"],
-                client_secret=st.secrets["SPOTIFY_CLIENT_SECRET"]
-            ))
-           
-        results = sp_client.search(q=genre, type='playlist', limit=5)
+
+            sp_client = spotipy.Spotify(
+                auth_manager=SpotifyClientCredentials(
+                    client_id=st.secrets["SPOTIFY_CLIENT_ID"],
+                    client_secret=st.secrets["SPOTIFY_CLIENT_SECRET"]
+                )
+            )
+
+        results = sp_client.search(q=f"{genre} playlist", type='playlist', limit=5)
+
         if not results or 'playlists' not in results or not results['playlists']['items']:
-            st.error("❌ No playlists found for this genre. Please try another genre.")
+            st.error("❌ No playlists found, try again.")
             return None
-           
+
         playlist = random.choice(results['playlists']['items'])
         return playlist['external_urls']['spotify']
-       
-    except Exception:
-        return None
 
+    except Exception as e:
+        st.error(f"Spotify Error: {e}")
+        return None
+        
 async def create_and_compose(genre):
     """Create and compose a new track of the specified genre using Lyria."""
     if not API_KEY:
