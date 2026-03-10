@@ -180,8 +180,8 @@ async def generate_genre_track(genre_name, duration_seconds=10):
 async def get_spotify_playlist(genre, sp_client=None):
     try:
         if sp_client is None:
-            if not hasattr(st, 'secrets') or not st.secrets.get("SPOTIFY_CLIENT_ID"):
-                st.error("❌ Spotify API credentials not configured.")
+            if not st.secrets.get("SPOTIFY_CLIENT_ID"):
+                st.error("❌ Spotify credentials missing.")
                 return None
 
             import spotipy
@@ -194,14 +194,25 @@ async def get_spotify_playlist(genre, sp_client=None):
                 )
             )
 
-        results = sp_client.search(q=f"{genre} playlist", type='playlist', limit=5)
+        results = sp_client.search(q=genre, type='playlist', limit=5)
 
-        if not results or 'playlists' not in results or not results['playlists']['items']:
-            st.error("❌ No playlists found, try again.")
+        # SAFE CHECKS
+        if not results:
             return None
 
-        playlist = random.choice(results['playlists']['items'])
-        return playlist['external_urls']['spotify']
+        playlists = results.get("playlists")
+
+        if not playlists:
+            return None
+
+        items = playlists.get("items")
+
+        if not items:
+            return None
+
+        playlist = random.choice(items)
+
+        return playlist["external_urls"]["spotify"]
 
     except Exception as e:
         st.error(f"Spotify Error: {e}")
