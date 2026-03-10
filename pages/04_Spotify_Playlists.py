@@ -1,160 +1,196 @@
-import asyncio
-import os
-import wave
 import streamlit as st
-import random
-import numpy as np
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-from io import BytesIO
-from datetime import datetime, timedelta
-import time
-import nest_asyncio
-from google import genai
-from google.genai import types
+import asyncio
+from music import predict_favorite_genre, get_spotify_playlist, embed_spotify_playlist
+from datetime import datetime
+from login import is_authenticated, show_login_page
 
-nest_asyncio.apply()
-
-API_KEY = st.secrets.get("LYRIA_API_KEY")
-SPOTIFY_ID = st.secrets.get("SPOTIFY_CLIENT_ID")
-SPOTIFY_SECRET = st.secrets.get("SPOTIFY_CLIENT_SECRET")
-
-client = genai.Client(
-    api_key=API_KEY,
-    http_options={'api_version': 'v1alpha'}
-)
-
-@st.cache_resource
-def get_sp_client():
-    if SPOTIFY_ID and SPOTIFY_SECRET:
-        try:
-            return spotipy.Spotify(auth_manager=SpotifyClientCredentials(
-                client_id=SPOTIFY_ID,
-                client_secret=SPOTIFY_SECRET
-            ))
-        except Exception:
-            return None
-    return None
-
-sp_client = get_sp_client()
-
-GENRE_MAPPING = ["Rock", "Pop", "Metal", "EDM", "Hip hop", "Classical", "Video game music", "R&B"]
-
-GENRE_PROMPTS = {
-    "Classical": "Compose a serene classical piano piece reminiscent of a peaceful afternoon in a garden.",
-    "EDM": "Create an upbeat and energetic electronic dance track suitable for a vibrant festival atmosphere.",
-    "Hip hop": "Generate a laid-back hip hop beat with a smooth rhythm and catchy bassline, perfect for a chill evening.",
-    "Metal": "Produce a high-intensity metal track with fast guitar riffs and powerful drum beats.",
-    "Pop": "Compose a catchy pop melody with an uplifting vibe and a memorable chorus.",
-    "R&B": "Create a soulful R&B track with a slow groove and emotional vocal harmonies.",
-    "Rock": "Generate a classic rock anthem with strong guitar chords and a steady, driving beat.",
-    "Video game music": "Compose an adventurous and dynamic theme suitable for an action-packed video game level."
+# Set background color to match home page
+# Background styling
+st.markdown("""
+<style>
+.stApp {
+    background:
+            radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
+            radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%);
+}
+div.stButton > button {
+    background-color: #22D3EE !important;
+    color: #000000 !important; 
+    color: #000000 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: bold !important;
+    transition: all 0.2s ease-in-out !important;
 }
 
-def predict_favorite_genre(user_profile, model):
-    try:
-        def get_feature(key, default=0):
-            value = user_profile.get(key, default)
-            if value is None: return float(default)
-            if not isinstance(value, str): value = str(value)
-            if value.replace('.', '').isdigit(): return float(value)
-            if value.lower() in ['yes', 'no']: return 1.0 if value.lower() == 'yes' else 0.0
-            freq_map = {'never': 0.0, 'rarely': 1.0, 'sometimes': 2.0, 'very frequently': 3.0}
-            if value.lower() in freq_map: return freq_map[value.lower()]
-            try:
-                return float(value)
-            except (ValueError, TypeError):
-                return float(default)
-       
-        input_features = [
-            float(get_feature('Age', 25)),
-            float(get_feature('Hours per day', 2)),
-            float(1 if str(user_profile.get('While working', 'No')).lower() == 'yes' else 0),
-            float(1 if str(user_profile.get('Instrumentalist', 'No')).lower() == 'yes' else 0),
-            float(1 if str(user_profile.get('Composer', 'No')).lower() == 'yes' else 0),
-            float(1 if str(user_profile.get('Exploratory', 'No')).lower() == 'yes' else 0),
-            float(1 if str(user_profile.get('Foreign languages', 'No')).lower() == 'yes' else 0),
-            float(get_feature('BPM', 120)),
-            float(get_feature('Frequency_Classical', get_feature('Frequency [Classical]', 2))),
-            float(get_feature('Frequency_EDM', get_feature('Frequency [EDM]', 2))),
-            float(get_feature('Frequency_Folk', get_feature('Frequency [Folk]', 2))),
-            float(get_feature('Frequency_Gospel', get_feature('Frequency [Gospel]', 2))),
-            float(get_feature('Frequency_HipHop', get_feature('Frequency [Hip hop]', 2))),
-            float(get_feature('Frequency_Jazz', get_feature('Frequency [Jazz]', 2))),
-            float(get_feature('Frequency_KPop', get_feature('Frequency [K pop]', 2))),
-            float(get_feature('Frequency_Metal', get_feature('Frequency [Metal]', 2))),
-            float(get_feature('Frequency_Pop', get_feature('Frequency [Pop]', 2))),
-            float(get_feature('Frequency_RnB', get_feature('Frequency [R&B]', 2))),
-            float(get_feature('Frequency_Rock', get_feature('Frequency [Rock]', 2))),
-            float(get_feature('Frequency_VGM', get_feature('Frequency [Video game music]', 2))),
-            float(get_feature('Anxiety', 5)),
-            float(get_feature('Depression', 5)),
-            float(get_feature('Insomnia', 5)),
-            float(get_feature('OCD', 5)),
-            float(1 if str(user_profile.get('MusicEffects', 'No')).lower() == 'improve' else 0)
-        ]
-       
-        input_array = np.array([input_features], dtype=np.float32)
-        prediction = model.predict(input_array)
-        index = int(prediction[0]) if len(prediction) > 0 else 0
-        index = max(0, min(index, len(GENRE_MAPPING) - 1))
-        return GENRE_MAPPING[index]
-    except Exception:
-        return "Pop"
+div.stButton > button:hover {
+    background-color: #64E9FA !important;
+    color: #000000 !important; /* Dark text for readability */
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+}
 
-async def generate_genre_track(genre_name, duration_seconds=10):
-    prompt_text = GENRE_PROMPTS.get(genre_name)
-    if not prompt_text: return None
-    filename = f"{genre_name.replace(' ', '_')}_track.wav"
-    try:
-        with wave.open(filename, 'wb') as wf:
-            wf.setnchannels(2)
-            wf.setsampwidth(2)
-            wf.setframerate(48000)
-            async with client.aio.live.music.connect(model='models/lyria-realtime-exp') as session:
-                await session.set_weighted_prompts(prompts=[types.WeightedPrompt(text=prompt_text, weight=1.0)])
-                await session.play()
-                chunks_needed = duration_seconds // 2
-                count = 0
-                async for message in session.receive():
-                    if message.server_content.audio_chunks:
-                        wf.writeframes(message.server_content.audio_chunks[0].data)
-                        count += 1
-                    if count >= chunks_needed: break
-        return filename
-    except Exception:
-        return None
 
-def get_spotify_playlist(genre):
-    if not sp_client:
-        return "37i9dQZF1DXcBWIGoYBM3M"
+div.stFormSubmitButton > button {
+    background-color: #22D3EE !important;
+    color: #000000 !important; 
+    border: none !important;
+    width: 100%; 
+    font-weight: bold !important;
+    padding: 0.6rem 2rem !important;
+    border-radius: 8px !important;
+}
+
+
+div.stFormSubmitButton > button:hover {
+    background-color: #64E9FA !important;
+    color: #000000 !important; 
+    border: 1px solid #64E9FA !important;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.6) !important;
+}
+
+    box-shadow: 0 0 15px rgba(34,211,238,0.6) !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Check authentication before showing page
+
+# Authentication check
+if not is_authenticated():
+    show_login_page()
+
+else:
+    st.title("🎧 Spotify Playlists")
+    
+    # Show user's predicted genre
+
+    # Predict genre
     try:
-        results = sp_client.search(q=f"playlist:{genre}", type="playlist", limit=1)
-        items = results.get("playlists", {}).get("items", [])
-        if items:
-            return items[0]["id"]
+        predicted_genre = predict_favorite_genre(st.session_state.user_profile, st.session_state.model)
+        predicted_genre = predict_favorite_genre(
+            st.session_state.user_profile,
+            st.session_state.model
+        )
+        st.info(f"Your predicted favorite genre: **{predicted_genre}**")
+
+    except Exception as e:
+        predicted_genre = "Pop"
+        st.warning(f"Could not predict genre: {str(e)}. Using default: {predicted_genre}")
+    
+    # Playlist generation section
+        st.warning(f"Could not predict genre: {e}. Using default: {predicted_genre}")
+
+
+    st.header("Get Personalized Playlists")
+    
+
+    if not st.session_state.sp_client:
+        st.error("❌ Spotify is not available. Please check your credentials.")
+
+    else:
         
-        fallback = sp_client.search(q=genre, type="playlist", limit=1)
-        fallback_items = fallback.get("playlists", {}).get("items", [])
-        return fallback_items[0]["id"] if fallback_items else "37i9dQZF1DXcBWIGoYBM3M"
-    except Exception:
-        return "37i9dQZF1DXcBWIGoYBM3M"
+        col1, col2 = st.columns([2, 1])
+        
 
-def embed_spotify_playlist(playlist_id):
-    embed_url = f"https://open.spotify.com/embed/playlist/{playlist_id}?utm_source=generator"
-    st.markdown(
-        f"""
-        <iframe src="{embed_url}" width="100%" height="380" frameBorder="0" 
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-        loading="lazy"></iframe>
-        """,
-        unsafe_allow_html=True
-    )
+        col1, col2 = st.columns([2,1])
 
-async def create_and_compose(genre):
-    if not API_KEY: return None
-    try:
-        filename = await generate_genre_track(genre, duration_seconds=10)
-        return filename
-    except Exception:
-        return None
+        with col1:
+
+            st.write("Get curated Spotify playlists based on your music preferences and current mood.")
+            
+
+            if st.button("🎧 Get Spotify Playlist", key="get_spotify_playlist", type="primary"):
+                with st.spinner('🎧 Finding your perfect playlist...'):
+if st.button("🎧 Get Spotify Playlist", key="get_spotify_playlist", type="primary"):
+    with st.spinner('🎧 Finding your perfect playlist...'):
+
+        try:
+            playlist_url = asyncio.run(
+                get_spotify_playlist(predicted_genre, st.session_state.sp_client)
+            )
+                with st.spinner("🎧 Finding your perfect playlist..."):
+
+            if playlist_url:
+                    try:
+                        playlist_url = asyncio.run(
+                            get_spotify_playlist(
+                                predicted_genre,
+                                st.session_state.sp_client
+                            )
+                        )
+
+                # Store playlist history
+                if 'playlist_history' not in st.session_state:
+                    st.session_state.playlist_history = []
+                        if playlist_url:
+
+                st.session_state.playlist_history.append(
+                    (predicted_genre, playlist_url, datetime.now().strftime("%Y-%m-%d %H:%M"))
+                )
+                            if "playlist_history" not in st.session_state:
+                                st.session_state.playlist_history = []
+
+                st.success("✅ Playlist found!")
+                            st.session_state.playlist_history.append(
+                                (
+                                    predicted_genre,
+                                    playlist_url,
+                                    datetime.now().strftime("%Y-%m-%d %H:%M")
+                                )
+                            )
+
+                st.subheader(f"🎧 Recommended {predicted_genre} Playlist")
+                            st.success("✅ Playlist found!")
+
+                # Embedded Spotify player
+                embed_spotify_playlist(playlist_url)
+                            st.subheader(f"🎧 Recommended {predicted_genre} Playlist")
+
+                # Optional link
+                st.markdown(
+                    f'<a href="{playlist_url}" target="_blank">🎵 Open Playlist in Spotify</a>',
+                    unsafe_allow_html=True
+                )
+                            embed_spotify_playlist(playlist_url)
+
+            else:
+                st.error("❌ No playlist found. Try a different genre.")
+                            st.markdown(
+                                f'<a href="{playlist_url}" target="_blank">🎵 Open Playlist in Spotify</a>',
+                                unsafe_allow_html=True
+                            )
+
+        except Exception as e:
+            st.error(f"❌ Error getting playlist: {str(e)}")
+                        else:
+                            st.error("❌ No playlist found. Try a different genre.")
+
+                    except Exception as e:
+                        st.error(f"❌ Error getting playlist: {str(e)}")
+
+        with col2:
+
+            st.subheader("Playlist History")
+            if 'playlist_history' not in st.session_state:
+
+            if "playlist_history" not in st.session_state:
+                st.session_state.playlist_history = []
+            
+
+            if st.session_state.playlist_history:
+                for i, (genre, url, timestamp) in enumerate(st.session_state.playlist_history[-5:], 1):
+
+                for i, (genre, url, timestamp) in enumerate(
+                    st.session_state.playlist_history[-5:], 1
+                ):
+                    st.write(f"{i}. [{genre}]({url}) - {timestamp}")
+
+            else:
+                st.write("No playlists generated yet.")
+    
+    
