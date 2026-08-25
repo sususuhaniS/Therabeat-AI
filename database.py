@@ -7,27 +7,27 @@ from datetime import datetime
 import json
 import os
 
+
 def initialize_firestore():
     """Initialize Firestore with credentials from Streamlit secrets."""
     try:
         if not firebase_admin._apps:
             # Get Firebase config from Streamlit secrets
             firebase_config = st.secrets.get("firebase", {})
-            
             if not firebase_config:
                 raise ValueError("Firebase configuration not found in secrets.toml")
-                
+
             # Required fields
             required_fields = [
                 "project_id", "private_key_id", "private_key",
                 "client_email", "client_id", "client_x509_cert_url"
             ]
-            
+
             # Validate required fields
             for field in required_fields:
                 if field not in firebase_config:
                     raise ValueError(f"Missing required Firebase config: {field}")
-            
+
             # Prepare the service account info
             service_account_info = {
                 "type": "service_account",
@@ -39,21 +39,21 @@ def initialize_firestore():
                 "auth_uri": firebase_config.get("auth_uri", "https://accounts.google.com/o/oauth2/auth"),
                 "token_uri": firebase_config.get("token_uri", "https://oauth2.googleapis.com/token"),
                 "auth_provider_x509_cert_url": firebase_config.get(
-                    "auth_provider_x509_cert_url", 
+                    "auth_provider_x509_cert_url",
                     "https://www.googleapis.com/oauth2/v1/certs"
                 ),
                 "client_x509_cert_url": firebase_config["client_x509_cert_url"]
             }
-            
+
             # Initialize Firebase
             cred = credentials.Certificate(service_account_info)
             firebase_admin.initialize_app(cred)
-            
+
         return firestore.client()
-        
     except Exception as e:
         st.error(f"Failed to initialize Firestore: {str(e)}")
         st.stop()  # Stop execution if Firebase can't be initialized
+
 
 # Initialize Firestore
 try:
@@ -61,6 +61,7 @@ try:
 except Exception as e:
     st.error(f"Critical error initializing database: {str(e)}")
     raise
+
 
 def get_user_profile(user_email):
     """Retrieve user profile from Firestore."""
@@ -72,6 +73,7 @@ def get_user_profile(user_email):
         st.error(f"Error fetching user profile: {e}")
         return None
 
+
 def save_user_profile(user_email, user_data):
     try:
         doc_ref = db.collection('users').document(user_email)
@@ -80,14 +82,15 @@ def save_user_profile(user_email, user_data):
     except Exception as e:
         st.error(f"Error saving user profile: {e}")
         return False
-        
+
+
 def update_user_mood(user_email, mood_data):
-    """Update user's mood data in the database.
-    
+    """Update the user's self-reported listening-context data in the database.
+
     Args:
         user_email (str): The email of the user
-        mood_data (dict): Dictionary containing mood data to update
-        
+        mood_data (dict): Dictionary containing the self-report fields to update
+
     Returns:
         bool: True if update was successful, False otherwise
     """
@@ -97,30 +100,43 @@ def update_user_mood(user_email, mood_data):
         doc_ref.set(mood_data, merge=True)
         return True
     except Exception as e:
-        st.error(f"Error updating mood data: {str(e)}")
+        st.error(f"Error updating listening-context data: {str(e)}")
         return False
 
+
 def show_user_profile_form():
-    """Display a form to collect user profile information with categorical options."""
+    """Display a form to collect user profile information with categorical options.
+
+    NOTE ON FIELD NAMES: the keys written into user_data below (Anxiety,
+    Depression, Insomnia, OCD, BPM, Frequency_*, etc.) match the trained
+    model's feature vector in music.py's predict_favorite_genre and must
+    not be renamed. Only the surrounding labels/headers were reworded to
+    make clear these are self-reported research survey inputs, not a
+    clinical assessment.
+    """
     with st.form("user_profile_form"):
         st.subheader("Tell us about your music preferences")
-        
+        st.caption(
+            "These questions are self-reported survey inputs used by a research "
+            "recommendation model. They are not a clinical assessment, and MeloMatch "
+            "AI does not diagnose, treat, or provide therapy for any condition."
+        )
+
         # Define options
         yes_no_options = ['Yes', 'No']
         music_effect_options = ['Improve', 'Not']
         frequency_options = ['Never', 'Rarely', 'Sometimes', 'Very frequently']
-        
+
         # Basic Information
         col1, col2 = st.columns(2)
         with col1:
             age = st.number_input("Age", min_value=5, max_value=120, value=25, step=1)
             hours_per_day = st.number_input("Hours of music per day", min_value=0, max_value=24, value=2, step=1)
             while_working = st.selectbox("While working", ['Yes', 'No'])
-        
+
         # Music Preferences
         st.markdown("### Music Listening Frequency")
         col1, col2 = st.columns(2)
-        
         with col1:
             classical = st.selectbox("Classical", frequency_options, index=2)
             edm = st.selectbox("EDM", frequency_options, index=1)
@@ -128,7 +144,6 @@ def show_user_profile_form():
             gospel = st.selectbox("Gospel", frequency_options, index=1)
             hiphop = st.selectbox("Hip Hop", frequency_options, index=3)
             jazz = st.selectbox("Jazz", frequency_options, index=2)
-            
         with col2:
             kpop = st.selectbox("K-Pop", frequency_options, index=3)
             metal = st.selectbox("Metal", frequency_options, index=1)
@@ -136,7 +151,7 @@ def show_user_profile_form():
             rb = st.selectbox("R&B", frequency_options, index=3)
             rock = st.selectbox("Rock", frequency_options, index=2)
             vgm = st.selectbox("Video Game Music", frequency_options, index=1)
-        
+
         # Additional Information
         st.markdown("### Additional Information")
         col1, col2 = st.columns(2)
@@ -144,29 +159,31 @@ def show_user_profile_form():
             instrumentalist = st.selectbox("Are you an instrumentalist?", ['No', 'Yes'])
         with col2:
             composer = st.selectbox("Are you a composer?", ['No', 'Yes'])
-        
+
         exploratory = st.selectbox("Do you like exploring new music?", ['Yes', 'No'])
         foreign_languages = st.selectbox("Do you understand foreign languages?", ['No', 'Yes'])
-        
-        # Mood Initialization
-        st.markdown("### Initial Mood Settings")
-        st.info("Please set your current mood. You can update this later at any time.")
-        
+
+        # Self-Reported Listening Context (feeds the recommendation model)
+        st.markdown("### Self-Reported Listening Context (Research Use Only)")
+        st.info(
+            "These self-rated scales are research survey inputs to the recommendation "
+            "model, not a clinical or diagnostic assessment. You can update them later."
+        )
         col1, col2 = st.columns(2)
         with col1:
-            openness = st.selectbox("Open to new experiences?", ['Yes', 'No'], 
-                                 help="Are you open to trying new types of music?")
-            anxiety = st.slider("Anxiety (1-10)", 1, 10, 5,
-                             help="Your current anxiety level (1=low, 10=high)")
-            depression = st.slider("Depression (1-10)", 1, 10, 5,
-                                help="Your current mood (1=low, 10=high)")
+            openness = st.selectbox("Open to new experiences?", ['Yes', 'No'],
+                                     help="Are you open to trying new types of music?")
+            anxiety = st.slider("Anxiety (self-rated, 1-10)", 1, 10, 5,
+                                 help="Self-rated anxiety level (1=low, 10=high). Research input only.")
+            depression = st.slider("Depression (self-rated, 1-10)", 1, 10, 5,
+                                    help="Self-rated mood level (1=low, 10=high). Research input only.")
         with col2:
-            insomnia = st.slider("Insomnia (1-10)", 1, 10, 5,
-                              help="Your recent sleep quality (1=poor, 10=excellent)")
-            ocd = st.slider("OCD (1-10)", 1, 10, 5,
-                          help="Your current ability to focus (1=poor, 10=excellent)")
+            insomnia = st.slider("Insomnia (self-rated, 1-10)", 1, 10, 5,
+                                  help="Self-rated recent sleep quality (1=poor, 10=excellent). Research input only.")
+            ocd = st.slider("OCD (self-rated, 1-10)", 1, 10, 5,
+                             help="Self-rated ability to focus (1=poor, 10=excellent). Research input only.")
+            music_effect = st.selectbox("Does music affect your mood?", music_effect_options)
 
-        music_effect = st.selectbox("Does music affect your mood?", music_effect_options)
         bpm = st.slider("Preferred BPM (Beats Per Minute)", 60, 200, 120)
 
         if st.form_submit_button("Save Profile"):
@@ -192,7 +209,7 @@ def show_user_profile_form():
                 'ForeignLanguages': 1 if foreign_languages == 'Yes' else 0,
                 'MusicEffects': music_effect,
                 'BPM': bpm,
-                # Mood data
+                # Self-reported listening-context fields (model inputs)
                 'Openness': 1 if openness == 'Yes' else 0,
                 'Anxiety': anxiety,
                 'Depression': depression,
@@ -202,29 +219,28 @@ def show_user_profile_form():
                 'MoodLastUpdated': datetime.now().isoformat()
             }
             return user_data
-    return None
+        return None
+
 
 def create_initial_user_profile(user_email):
     """Show the profile creation form and save the data."""
     st.info("Welcome! Please complete your profile to get started.")
     user_data = show_user_profile_form()
-
     if user_data:
         if save_user_profile(user_email, user_data):
             st.success("Profile saved successfully!")
-
             st.session_state["user_profile"] = user_data
             st.rerun()
-
         else:
             st.error("Failed to save profile. Please try again.")
-
     return None
 
+
 def display_stored_user_data(user_profile):
-    """Display the user's profile information with expandable sections and editable mood."""
+    """Display the user's profile information with expandable sections and an editable
+    self-reported listening-context form."""
     st.subheader("Your Profile")
-    
+
     # Basic Information - Expandable section
     with st.expander("Basic Information", expanded=False):
         col1, col2 = st.columns(2)
@@ -234,7 +250,7 @@ def display_stored_user_data(user_profile):
         with col2:
             st.metric("Hours per day", user_profile.get('Hours per day', 'Not set'))
             st.metric("Composer", user_profile.get('Composer', 'Not set'))
-    
+
     # Music Preferences - Expandable section
     with st.expander("Music Preferences", expanded=False):
         pref_columns = st.columns(4)
@@ -252,7 +268,7 @@ def display_stored_user_data(user_profile):
             ('Rock', ['Frequency_Rock', 'Rock']),
             ('Video Game Music', ['Frequency_VGM', 'Video Game Music', 'VGM'])
         ]
-        
+
         for i, (display_name, possible_keys) in enumerate(genres):
             with pref_columns[i % 4]:
                 # Try all possible key variations
@@ -262,11 +278,13 @@ def display_stored_user_data(user_profile):
                         value = user_profile[key]
                         break
                 st.metric(display_name, value)
-    
-    st.markdown("### Current Mood")
+
+    st.markdown("### Update Your Self-Reported Listening Context")
+    st.caption(
+        "Research survey inputs used by the recommendation model — not a clinical assessment."
+    )
     with st.form("mood_form"):
         col1, col2 = st.columns(2)
-        
         with col1:
             # Openness as Yes/No select box
             openness = st.selectbox(
@@ -276,48 +294,46 @@ def display_stored_user_data(user_profile):
                 key="mood_openness"
             )
             anxiety = st.slider(
-                "Anxiety (1-10)", 
-                min_value=1, 
-                max_value=10, 
+                "Anxiety (self-rated, 1-10)",
+                min_value=1,
+                max_value=10,
                 value=int(user_profile.get('Anxiety', 5)),
                 key="mood_anxiety"
             )
             depression = st.slider(
-                "Depression (1-10)", 
-                min_value=1, 
-                max_value=10, 
+                "Depression (self-rated, 1-10)",
+                min_value=1,
+                max_value=10,
                 value=int(user_profile.get('Depression', 5)),
                 key="mood_depression"
             )
-        
         with col2:
             insomnia = st.slider(
-                "Insomnia (1-10)", 
-                min_value=1, 
-                max_value=10, 
+                "Insomnia (self-rated, 1-10)",
+                min_value=1,
+                max_value=10,
                 value=int(user_profile.get('Insomnia', 5)),
                 help="1 = No trouble sleeping, 10 = Severe insomnia",
                 key="mood_insomnia"
             )
             ocd = st.slider(
-                "OCD (1-10)", 
-                min_value=1, 
-                max_value=10, 
+                "OCD (self-rated, 1-10)",
+                min_value=1,
+                max_value=10,
                 value=int(user_profile.get('OCD', 5)),
                 help="1 = No symptoms, 10 = Severe symptoms",
                 key="mood_ocd"
             )
-        
-        # Save button for mood updates
-        if st.form_submit_button("Update Mood"):
+
+        # Save button for listening-context updates
+        if st.form_submit_button("Update"):
             # Get user email from the profile or session state
             user_email = user_profile.get('email') or (st.session_state.get('user_email') if 'user_email' in st.session_state else None)
-            
             if not user_email:
                 st.error("Could not determine user email. Please log in again.")
                 return
-                
-            # Update the user profile with new mood values
+
+            # Update the user profile with new self-report values
             mood_update = {
                 'Exploratory': 1 if openness == 'Yes' else 0,
                 'Anxiety': anxiety,
@@ -326,19 +342,19 @@ def display_stored_user_data(user_profile):
                 'OCD': ocd,
                 'LastUpdated': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
-            
+
             # Update local profile
             user_profile.update(mood_update)
-            
+
             # Save the updated profile
             if save_user_profile(user_email, user_profile):
                 # Update session state if needed
                 if 'user_info' in st.session_state and st.session_state.user_info is not None:
                     st.session_state.user_info.update(mood_update)
-                st.success("Mood updated successfully!")
+                st.success("Updated successfully!")
             else:
-                st.error("Failed to update mood. Please try again.")
-    
+                st.error("Failed to update. Please try again.")
+
     # Last updated
     if 'LastUpdated' in user_profile:
         st.caption(f"Last updated: {user_profile['LastUpdated']}")

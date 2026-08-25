@@ -1,8 +1,10 @@
 import streamlit as st
 import asyncio
+
 from login import show_login_page, is_authenticated, get_current_user, logout
 from music import predict_favorite_genre, create_and_compose, get_spotify_playlist
 from database import get_user_profile, create_initial_user_profile, display_stored_user_data, update_user_mood
+
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import nest_asyncio
@@ -10,15 +12,21 @@ from datetime import datetime
 import pickle
 from pathlib import Path
 
+# Apply nest_asyncio to allow nested event loops
 nest_asyncio.apply()
 
+
+@st.cache_resource()
 def load_model():
-    """Load the trained XGBoost model."""
+    """Load the trained XGBoost model used for genre prediction.
+
+    NOTE: model artifact, feature definitions, and output mapping are
+    unchanged from the pre-rename version of this app.
+    """
     try:
         model_path = Path("best_xgb")
         if not model_path.exists():
-            raise FileNotFoundError("Model file not found. Please ensure best_xgb.pkl is in the project root.")
-        
+            raise FileNotFoundError("Model file not found. Please ensure best_xgb is in the project root.")
         with open(model_path, 'rb') as f:
             model = pickle.load(f)
         return model
@@ -26,13 +34,13 @@ def load_model():
         st.error(f"❌ Error loading model: {str(e)}")
         raise
 
+
 def initialize_spotify():
     """Initialize Spotify client with error handling."""
     try:
         if not all(key in st.secrets for key in ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"]):
             st.error("❌ Spotify API credentials are missing. Please check your secrets.toml")
             return None
-            
         return spotipy.Spotify(auth_manager=SpotifyClientCredentials(
             client_id=st.secrets["SPOTIFY_CLIENT_ID"],
             client_secret=st.secrets["SPOTIFY_CLIENT_SECRET"]
@@ -41,123 +49,169 @@ def initialize_spotify():
         st.error(f"❌ Failed to initialize Spotify client: {str(e)}")
         return None
 
-async def home_page():
-    """Display home page with welcome message."""
+
+async def hero_section():
+    """Display the landing hero section."""
     st.markdown("""
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
-
-        .stApp {
-            background:
-                radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%) !important;
-        }
-
-        .welcome-container {
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: auto;
-            text-align: center;
-            color: white;
-            padding: 20px;
-        }
-
-        .top-eyebrow {
-            font-size: 14px;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            color: #22D3EE;
-            font-weight: 700;
-            margin-bottom: 15px;
-            margin-top: 40px;
-        }
-
-        .main-hero-title {
-            font-size: 5rem;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom:20px;
-            letter-spacing: -2px;
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #22D3EE 0%, #3B82F6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
-
-        .subtitle-desc {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin-bottom: 10px;
-            opacity: 0.8;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-
-        .feature-cards {
-            display: flex;
-            gap: 2rem;
-            margin-top: 3rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: stretch;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            width: 280px;
-            min-height: 200px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
-        .feature-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .feature-desc { opacity: 0.8; font-size: 0.9rem; }
-        </style>
-
-        <div class="welcome-container">
-            <div class="top-eyebrow">Reimagining Music Therapy</div>
-            <div class="main-hero-title">
-                TheraBeat<span class="gradient-text"> AI</span>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+    .stApp {
+        background:
+            radial-gradient(ellipse at 30% 20%, rgba(88, 28, 135, 0.4) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(0, 0, 0, 1) 100%) !important;
+    }
+    .welcome-container {
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: auto;
+        text-align: center;
+        color: white;
+        padding: 20px;
+    }
+    .top-eyebrow {
+        font-size: 14px;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        color: #22D3EE;
+        font-weight: 700;
+        margin-bottom: 15px;
+        margin-top: 40px;
+    }
+    .main-hero-title {
+        font-size: 5rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 20px;
+        letter-spacing: -2px;
+    }
+    .gradient-text {
+        background: linear-gradient(135deg, #22D3EE 0%, #3B82F6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+    .subtitle-desc {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin-bottom: 10px;
+        opacity: 0.8;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+    .disclaimer-desc {
+        font-size: 0.85rem;
+        max-width: 700px;
+        margin-top: 4px;
+        margin-bottom: 30px;
+        opacity: 0.55;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+    .feature-cards {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: stretch;
+    }
+    .feature-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        width: 280px;
+        min-height: 200px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .feature-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem; }
+    .feature-desc { opacity: 0.8; font-size: 0.9rem; }
+    </style>
+    <div class="welcome-container">
+        <div class="top-eyebrow">Research Prototype</div>
+        <div class="main-hero-title">
+            MeloMatch<span class="gradient-text"> AI</span>
+        </div>
+        <div class="subtitle-desc">
+            A research prototype exploring personalized music recommendations, built with a
+            machine-learning genre model and generative audio.
+        </div>
+        <div class="disclaimer-desc">
+            MeloMatch AI is not therapy, a diagnostic tool, or medical advice. It's an early-stage
+            research prototype for studying music-preference recommendations.
+        </div>
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="feature-icon">🎵</div>
+                <div class="feature-title">AI-Generated Music</div>
+                <div class="feature-desc">Generate an original track based on your predicted genre preference</div>
             </div>
-            <div class="subtitle-desc">
-                Your personalized journey to mental wellness through the power of generative audio landscapes.
-            </div>
-            <div class="feature-cards">
-                <div class="feature-card">
-                    <div class="feature-icon">🎵</div>
-                    <div class="feature-title">AI Music</div>
-                    <div class="feature-desc">Generate personalized music based on your mood and preferences</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎧</div>
-                    <div class="feature-title">Spotify Playlists</div>
-                    <div class="feature-desc">Get curated playlists tailored to your emotional state</div>
-                </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎧</div>
+                <div class="feature-title">Spotify Playlists</div>
+                <div class="feature-desc">Get a curated playlist that matches your predicted genre preference</div>
             </div>
         </div>
+    </div>
     """, unsafe_allow_html=True)
-    
+
+
+async def recommendations_section(user_profile, sp_client, model):
+    """Display genre-based music recommendations for the current user.
+
+    Merged from the former app.py; model call, feature vector, and
+    output mapping are unchanged.
+    """
+    st.header("Your Recommendations")
+
+    display_stored_user_data(user_profile)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("🎵 AI-Generated Music")
+        if st.button("Generate AI Music", key="generate_ai_music"):
+            with st.spinner('Composing a track based on your predicted genre...'):
+                try:
+                    genre = predict_favorite_genre(user_profile, model)
+                    st.markdown(f'**Predicted genre:** {genre}')
+                    await create_and_compose(genre)
+                except Exception as e:
+                    st.error(f"❌ Error generating music: {str(e)}")
+
+    with col2:
+        st.subheader("🎧 Spotify Playlists")
+        if st.button("Get Spotify Playlist", key="get_spotify_playlist"):
+            if not sp_client:
+                st.error("Spotify is not available. Please check your credentials.")
+                return
+            try:
+                genre = predict_favorite_genre(user_profile, model)
+                playlist_url = await get_spotify_playlist(genre, sp_client)
+                if playlist_url:
+                    st.success(f"Here's a {genre} playlist for you:")
+                    st.markdown(f"[Open Playlist in Spotify]({playlist_url})")
+                else:
+                    st.warning(f"No {genre} playlists found. Please try another genre.")
+            except Exception as e:
+                st.error(f"❌ Failed to fetch playlist: {str(e)}")
+
+
 async def main():
     if 'user_info' not in st.session_state:
         st.session_state.user_info = None
@@ -172,15 +226,15 @@ async def main():
     if 'playlist_history' not in st.session_state:
         st.session_state.playlist_history = []
 
-   
     try:
         st.set_page_config(
-            page_title="TheraBeat AI - Home",
+            page_title="MeloMatch AI - Home",
             page_icon="🎵",
             layout="wide"
         )
-        
+
         if not is_authenticated():
+            await hero_section()
             show_login_page()
             return
 
@@ -202,50 +256,54 @@ async def main():
         if not model:
             st.error("Failed to load the prediction model.")
             return
-        
+
         # Get user profile
         user_email = user['email']
         user_profile = get_user_profile(user_email)
-        
+
         if user_profile is None:
             # First-time user - show profile creation
             user_profile = create_initial_user_profile(user_email)
-            
             if user_profile is None:
                 # User didn't complete profile
                 st.warning("Please complete your profile to continue.")
                 return
-        
+
         # Store data in session state for other pages
         st.session_state.user_profile = user_profile
         st.session_state.model = model
         st.session_state.sp_client = sp_client
         st.session_state.user = user
-  
+
         st.sidebar.markdown("""
         <style>
         [data-testid="stSidebar"] {
-             
             padding: 20px;
-            background-color: black
+            background-color: black;
             color: white;
         }
         </style>
         """, unsafe_allow_html=True)
-        
+
         if st.sidebar.button("Logout", type="secondary"):
             logout()
             st.rerun()
-        
-        # Show welcome message in sidebar
+
+        # Show welcome message + non-clinical disclaimer in sidebar
         st.sidebar.write(f"Welcome, {user.get('name', 'User')}!")
-        
-        # Show the main home page content
-        await home_page()
+        st.sidebar.caption(
+            "MeloMatch AI is a research prototype for personalized music recommendations. "
+            "It is not therapy, diagnosis, or medical treatment."
+        )
+
+        # Home hero + recommendations, now on a single page
+        await hero_section()
+        await recommendations_section(user_profile, sp_client, model)
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
         st.stop()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
